@@ -1,0 +1,297 @@
+{
+  "meta": {
+    "badge": "✨ Powered by Gemini 2.0 Flash API",
+    "title": "Invoice Dispute Resolver — Get paid with AI-powered demand letters",
+    "description": "Client hasn't paid your invoice? Automatically generate professional dispute and pre-litigation letters from your PDF invoices in 30 seconds."
+  },
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "cta": "Try Free"
+  },
+  "hero": {
+    "title_1": "Client hasn't paid your invoice?",
+    "title_2": "Get a professional dispute letter in 30 seconds.",
+    "description": "Stop wasting nerves on arguments and money on lawyers. Your client will think you have an in-house legal team. Upload your PDF invoice, select a tone, and let AI do the work.",
+    "cta_button": "Resolve Invoice Dispute",
+    "free_note": "3 free documents every month"
+  },
+  "problem": {
+    "title": "Why freelancers lose up to 15% of their hard-earned income?",
+    "p1_title": "Expensive Lawyers",
+    "p1_desc": "A single hour of a lawyer's time costs more than the disputed invoice itself. You end up giving up.",
+    "p2_title": "Client Ghosting",
+    "p2_desc": "Bad clients drag out payments because they know you lack the resources to send formal, scary legal demands.",
+    "p3_title": "Stress & Wasted Hours",
+    "p3_desc": "Instead of focusing on new paid projects, you spend nights drafting angry, ineffective emails."
+  },
+  "features": {
+    "title": "How Invoice Dispute Resolver works",
+    "step1_title": "Upload Invoice",
+    "step1_desc": "Drag & drop your PDF invoice. Our system automatically extracts amounts, dates, and names.",
+    "step2_title": "Choose Tone",
+    "step2_desc": "Select the mood: friendly reminder, strict business tone, or firm legal demand.",
+    "step3_title": "Send & Track",
+    "step3_desc": "Copy the text or send it directly from the platform. Get notified the moment they open it."
+  },
+  "testimonials": {
+    "title": "We've helped recover over $120,000 in delayed payments",
+    "t1_text": "\"The client ignored me for 3 months. I generated a strict legal letter here, hit send, and got paid the very next day!\"",
+    "t1_author": "Alex, Freelance UI/UX Designer",
+    "t2_text": "\"Phenomenal tool. The email tracking feature is a game-changer. I know exactly when the client opens the claim, so they can't pretend they missed it.\"",
+    "t2_author": "Sarah, Marketing Agency Founder"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "q1": "Are these letters legally binding?",
+    "a1": "The AI generates professional pre-litigation notices and demands based on international business standards. They show clients you're professional and ready to escalate.",
+    "q2": "Is my data secure?",
+    "a2": "Completely. All uploaded invoices are heavily encrypted and securely stored using Supabase Storage. Your data is private and fully safe.",
+    "q3": "How does the free plan work?",
+    "a3": "You get 3 document generations per month entirely free. No credit card required, no hidden catches."
+  },
+  "pricing": {
+    "title": "Prices for any task",
+    "free": {
+      "name": "Free",
+      "price": "$0",
+      "button": "Start for free",
+      "features": ["Up to 3 documents", "Basic AI analysis", "Draft letters"]
+    },
+    "starter": {
+      "name": "Starter",
+      "price": "$19",
+      "button": "Choose Starter",
+      "features": ["Up to 30 documents / mo", "Priority AI analysis", "Direct sending (Resend)"]
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "$49",
+      "button": "Choose Pro",
+      "features": ["Unlimited documents", "Custom AI prompts", "Personal status tracking"]
+    },
+    "mo": "/ mo"
+  },
+  "cta_bottom": {
+    "title": "Get paid what you are owed today",
+    "desc": "Join hundreds of business owners who stopped working for free and took control of their cash flow.",
+    "button": "Start for Free"
+  },
+  "footer": {
+    "rights": "© 2026 Invoice Dispute Resolver. All rights reserved."
+  },
+  "auth": {
+    "title": "Sign in to your account",
+    "google_btn": "Sign in with Google",
+    "or": "or",
+    "magic_link_btn": "Send Magic Link",
+    "loading": "Sending...",
+    "error_google": "Google login failed",
+    "error_email": "Please enter your email",
+    "error_general": "Something went wrong. Please try again.",
+    "success_msg": "Login link sent to your email!"
+  },
+  "app": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "documents": "Documents",
+      "settings": "Settings",
+      "sign_out": "Sign out"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Manage your invoice disputes",
+      "new_document": "New Document",
+      "no_documents": "No documents yet",
+      "no_documents_desc": "Upload your first invoice to generate a dispute letter",
+      "documents_count": "Documents uploaded",
+      "letters_count": "Letters sent",
+      "opened_count": "Opened by clients",
+      "table_title": "Your documents",
+      "table_id": "Client / Invoice",
+      "table_sum": "Amount",
+      "table_date": "Date of uploaded",
+      "table_status": "Status of disputes",
+      "table_action": "Action",
+      "table_unknown_client": "Unknown client",
+      "table_view": "View",
+      "table_draft": "Draft",
+      "table_sent": "Sent",
+      "table_opened": "Opened"
+    },
+    "documents": {
+      "title": "Documents",
+      "subtitle": "A complete list of uploaded invoices and email statuses.",
+      "total_count": "Total",
+      "search_input": "Search by client or ID..."
+    },
+    "newDocument": {
+      "title": "Upload Invoice",
+      "description": "Upload your PDF invoice to generate a dispute letter",
+      "dragDrop": "Drag & drop your PDF invoice here",
+      "clickBrowse": "or click to browse",
+      "limits": "PDF only · max 10MB",
+      "remove": "Remove",
+      "btnUploading": "Uploading...",
+      "btnContinue": "Upload & Continue",
+      "successUpload": "Invoice uploaded successfully!",
+      "errSomethingWentWrong": "Something went wrong.",
+      "errors": {
+        "limit_reached": "You have reached your monthly limit. Please upgrade your plan.",
+        "invalid_type": "Only PDF files are supported.",
+        "file_too_large": "File is too large. Maximum size is 10MB.",
+        "upload_failed": "Upload failed. Please try again."
+      }
+    },
+    "documentView": {
+      "back": "← Back",
+      "viewPdf": "View Original PDF ↗",
+      "extractedTitle": "Extracted Invoice Data",
+      "invoiceNumber": "Invoice Number",
+      "invoiceDate": "Invoice Date",
+      "amountDue": "Amount Due",
+      "btnSaving": "Saving...",
+      "btnSaveChanges": "Save Changes",
+      "generateTitle": "Generate Dispute Letter",
+      "letterType": "Letter Type",
+      "tone": "Tone",
+      "partyDetails": "Party Details (Optional)",
+      "describeSituation": "Describe the Situation",
+      "placeholderSituation": "Explain why you are disputing this invoice...",
+      "btnGenerating": "Generating...",
+      "btnGenerate": "Generate Letter",
+      "resultingDraft": "Resulting Draft",
+      "btnCopy": "📋 Copy Text",
+      "sendEmailTitle": "Send Letter via Email",
+      "recipientEmail": "Recipient Email",
+      "placeholderEmail": "client@example.com (or your test email)",
+      "emailSubject": "Email Subject",
+      "placeholderSubject": "Subject line",
+      "btnSending": "Sending Email...",
+      "btnSend": "🚀 Send Document to Client",
+      "resendNotice": "* Powered by Resend API. Status tracking will be logged automatically.",
+      "subjectPrefix": "Dispute regarding Invoice No.",
+      "subjectSpecification": "Specification",
+      "types": {
+        "claim": "Claim",
+        "response": "Response",
+        "reminder": "Reminder"
+      },
+      "tones": {
+        "business": "Business",
+        "friendly": "Friendly",
+        "legal": "Legal"
+      },
+      "placeholders": {
+        "senderName": "Your Name",
+        "senderCompany": "Your Company",
+        "senderEmail": "Your Email",
+        "senderPhone": "Your Phone",
+        "recipientName": "Recipient Name",
+        "recipientAddress": "Recipient Address"
+      },
+      "toasts": {
+        "loadError": "Failed to load document.",
+        "updateSuccess": "Invoice data updated successfully!",
+        "updateError": "Failed to update invoice data.",
+        "describeFirst": "Please describe your situation first.",
+        "generateSuccess": "Letter generated successfully!",
+        "generateError": "Failed to generate letter. Try again.",
+        "enterRecipient": "Please enter the recipient email address.",
+        "enterSubject": "Please enter an email subject.",
+        "sendSuccess": "Email has been successfully delivered via Resend!",
+        "copied": "Copied to clipboard!"
+      }
+    },
+    "settings": {
+      "global": "General / Localization",
+      "billing": "Subscription & Billing",
+      "langTitle": "Interface Language",
+      "langDesc": "Select the default language for letter generation and the dashboard.",
+      "saving": "Saving changes...",
+      "errorLang": "Failed to save language settings",
+      "errorBilling": "Error creating payment session",
+      "plansTitle": "Available Pricing Plans",
+      "plansDesc": "Manage your subscription and account limits.",
+      "badgeCurrent": "Your Plan",
+      "badgePopular": "Popular",
+      "perMonth": "/ month",
+      "btnCurrent": "Current Plan",
+      "btnBasic": "Basic Level",
+      "btnSelect": "Select",
+      "features": {
+        "free": ["Up to 3 documents", "Basic AI analysis", "Draft letters"],
+        "starter": ["Up to 30 documents / mo", "Priority AI analysis", "Direct sending (Resend)"],
+        "pro": ["Unlimited documents", "Custom AI prompts", "Personal status tracking"]
+      }
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "last_updated": "Last updated: June 11, 2026",
+    "sections": [
+      {
+        "title": "1. Introduction",
+        "content": "At Invoice Dispute Resolver, we respect your privacy. This policy explains how we collect, use, and protect your data when you use our service."
+      },
+      {
+        "title": "2. Data We Collect",
+        "content": "We collect: (a) Personal Information: name and email upon registration; (b) Document Data: PDF invoice files, metadata, and extracted text; (c) Technical Data: IP address, browser type, and access logs to ensure platform stability."
+      },
+      {
+        "title": "3. How we use your data",
+        "content": "The data is used exclusively for: (1) Providing AI-generated claims services; (2) Improving text analysis algorithms; (3) Sending important notifications about your account status or service updates."
+      },
+      {
+        "title": "4. Security and storage",
+        "content": "All data is stored on Supabase's secure servers using AES-256 encryption standards. We do not sell your data to third parties. You have the right to delete your account and all uploaded documents at any time through your profile settings."
+      },
+      {
+        "title": "5. Use of AI (Gemini API)",
+        "content": "We use the Gemini 2.0 Flash model through the official API. According to Google policy, data sent through the API is not used to further train general Google models unless the user allows it."
+      },
+      {
+        "title": "6. Cookies",
+        "content": "We use cookies to support the authorization session and analytics (Google Analytics). You can disable them in your browser settings, but this may limit the functionality of the service."
+      },
+      {
+        "title": "7. Contacts",
+        "content": "If you have any questions about this policy, please contact us by email: support@invoicedispute.com."
+      }
+    ]
+  },
+  "tos": {
+    "title": "Terms of Use",
+    "last_updated": "Last updated: June 11, 2026",
+    "sections": [
+      {
+        "title": "1. Acceptance of Terms",
+        "content": "By using Invoice Dispute Resolver, you confirm that you have read, understood, and agree to be bound by these Terms. If you are acting on behalf of a company, you warrant that you have the appropriate authority to do so."
+      },
+      {
+        "title": "2. Service Description and Disclaimer",
+        "content": "We provide a platform for generating business letter templates. We are NOT a law firm, attorneys, or legal representatives. The generated documents are only drafts for guidance. We do not guarantee the outcome of a dispute and are not responsible for actions taken based on our advice."
+      },
+      {
+        "title": "3. Terms of Use",
+        "content": "You may not use the service to: (a) create fraudulent or defamatory emails; (b) attempt to hack or interfere with the platform infrastructure; (c) send mass spam via our API."
+      },
+      {
+        "title": "4. Payments and Cancellations",
+        "content": "Subscriptions are charged on a monthly or annual basis in advance. You can cancel your subscription at any time through the control panel. After cancellation, you retain access to the features until the end of the current billing period. Refunds for unused periods are made in accordance with our internal refund policy."
+      },
+      {
+        "title": "5. Intellectual Property",
+        "content": "All site content, design, logos and program code belong to the owners of Invoice Dispute Resolver. You receive a limited, non-exclusive license to use the generated documents for your own business needs."
+      },
+      {
+        "title": "6. Change of Terms",
+        "content": "We reserve the right to make changes to these Terms at any time. We will try to notify users of significant updates by email."
+      },
+      {
+        "title": "7. Jurisdiction and Disputes",
+        "content": "Any disputes arising from these Terms shall be resolved through negotiations. In the event of failure to reach an agreement, in accordance with the laws of the jurisdiction in which the company is registered."
+      }
+    ]
+  }
+}

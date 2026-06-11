@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  authId    String   @unique
+  email     String   @unique
+  name      String?
+  avatarUrl String?
+  plan      Plan     @default(FREE)
+  language  String   @default("en")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  documents     Document[]
+  subscriptions Subscription[]
+
+  @@map("users")
+}
+
+model Document {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  pdfUrl        String
+  extractedData Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  letters Letter[]
+
+  @@map("documents")
+}
+
+model Letter {
+  id         String       @id @default(uuid())
+  documentId String
+  document   Document     @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  tone       Tone
+  type       LetterType
+  content    String       @db.Text
+  status     LetterStatus @default(DRAFT)
+
+  // Нові поля для збереження стану форми в інтерфейсі:
+  situation  String?      @db.Text // Опис ситуації, яку ввів користувач
+  partyDetails Json?
+
+  sentAt     DateTime?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  emailEvents EmailEvent[]
+
+  @@idIndex([documentId])
+  @@map("letters")
+}
+
+model EmailEvent {
+  id         String   @id @default(uuid())
+  letterId   String
+  letter     Letter   @relation(fields: [letterId], references: [id], onDelete: Cascade)
+  eventType  String
+  occurredAt DateTime @default(now())
+
+  @@idIndex([letterId])
+  @@map("email_events")
+}
+
+model Subscription {
+  id               String    @id @default(uuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lsSubscriptionId String    @unique
+  lsCustomerId     String?
+  variantId        String?
+  plan             Plan
+  status           String
+  renewsAt         DateTime?
+  endsAt           DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@idIndex([userId])
+  @@map("subscriptions")
+}
+
+enum Plan {
+  FREE
+  STARTER
+  PRO
+}
+
+enum Tone {
+  FRIENDLY
+  BUSINESS
+  LEGAL
+}
+
+enum LetterType {
+  CLAIM
+  RESPONSE
+  REMINDER
+}
+
+enum LetterStatus {
+  DRAFT
+  SENT
+  OPENED
+}
