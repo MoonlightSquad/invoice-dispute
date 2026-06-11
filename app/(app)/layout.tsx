@@ -1,4 +1,3 @@
-// app/layout.tsx (або ваш поточний файл лейауту)
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createServerClient } from '@supabase/ssr'
@@ -6,7 +5,9 @@ import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
 import { getDictionary } from '@/lib/i18n'
 import { SignOutButton } from '@/components/SignOutButton'
-import { SidebarNav } from '@/components/SidebarNav' // Імпортуємо новий клієнтський навігатор
+import { SidebarNav } from '@/components/SidebarNav'
+
+import '@/app/globals.css'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
     const cookieStore = await cookies()
@@ -29,19 +30,24 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     const dict = getDictionary(dbUser?.language ?? 'en')
 
     return (
-        <div className="min-h-screen bg-slate-50 flex">
-            <aside className="w-64 border-r bg-white min-h-screen p-4 flex flex-col">
-                <div className="font-bold text-xl text-indigo-600 mb-8">
-                    Invoice Resolver
+        <html lang={dbUser?.language ?? 'en'}>
+        <body className="bg-slate-50 text-slate-900 antialiased">
+        <div className="min-h-screen flex">
+            <aside className="w-64 border-r bg-white min-h-screen p-4 flex flex-col justify-between">
+                <div>
+                    <div className="font-bold text-xl text-indigo-600 mb-8">
+                        Invoice Resolver
+                    </div>
+
+                    <div className="text-xs text-slate-400 mb-6 truncate">
+                        {user.email}
+                    </div>
+
+                    {/* Інтерактивний клієнтський навігатор */}
+                    <SidebarNav dict={dict.app.nav} />
                 </div>
 
-                <div className="text-xs text-slate-400 mb-6 truncate">
-                    {user.email}
-                </div>
-
-                {/* Замінюємо старий <nav> на новий інтерактивний компонент */}
-                <SidebarNav dict={dict.app.nav} />
-
+                {/* Кнопка виходу залишається знизу сайдбару */}
                 <SignOutButton label={dict.app.nav.sign_out} />
             </aside>
 
@@ -49,5 +55,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 {children}
             </main>
         </div>
+        </body>
+        </html>
     )
 }
