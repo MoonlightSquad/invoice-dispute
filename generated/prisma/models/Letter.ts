@@ -31,6 +31,7 @@ export type LetterMinAggregateOutputType = {
   type: $Enums.LetterType | null
   content: string | null
   status: $Enums.LetterStatus | null
+  situation: string | null
   sentAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -43,6 +44,7 @@ export type LetterMaxAggregateOutputType = {
   type: $Enums.LetterType | null
   content: string | null
   status: $Enums.LetterStatus | null
+  situation: string | null
   sentAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -55,6 +57,8 @@ export type LetterCountAggregateOutputType = {
   type: number
   content: number
   status: number
+  situation: number
+  partyDetails: number
   sentAt: number
   createdAt: number
   updatedAt: number
@@ -69,6 +73,7 @@ export type LetterMinAggregateInputType = {
   type?: true
   content?: true
   status?: true
+  situation?: true
   sentAt?: true
   createdAt?: true
   updatedAt?: true
@@ -81,6 +86,7 @@ export type LetterMaxAggregateInputType = {
   type?: true
   content?: true
   status?: true
+  situation?: true
   sentAt?: true
   createdAt?: true
   updatedAt?: true
@@ -93,6 +99,8 @@ export type LetterCountAggregateInputType = {
   type?: true
   content?: true
   status?: true
+  situation?: true
+  partyDetails?: true
   sentAt?: true
   createdAt?: true
   updatedAt?: true
@@ -178,6 +186,8 @@ export type LetterGroupByOutputType = {
   type: $Enums.LetterType
   content: string
   status: $Enums.LetterStatus
+  situation: string | null
+  partyDetails: runtime.JsonValue | null
   sentAt: Date | null
   createdAt: Date
   updatedAt: Date
@@ -211,6 +221,8 @@ export type LetterWhereInput = {
   type?: Prisma.EnumLetterTypeFilter<"Letter"> | $Enums.LetterType
   content?: Prisma.StringFilter<"Letter"> | string
   status?: Prisma.EnumLetterStatusFilter<"Letter"> | $Enums.LetterStatus
+  situation?: Prisma.StringNullableFilter<"Letter"> | string | null
+  partyDetails?: Prisma.JsonNullableFilter<"Letter">
   sentAt?: Prisma.DateTimeNullableFilter<"Letter"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Letter"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Letter"> | Date | string
@@ -225,6 +237,8 @@ export type LetterOrderByWithRelationInput = {
   type?: Prisma.SortOrder
   content?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  situation?: Prisma.SortOrderInput | Prisma.SortOrder
+  partyDetails?: Prisma.SortOrderInput | Prisma.SortOrder
   sentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -242,6 +256,8 @@ export type LetterWhereUniqueInput = Prisma.AtLeast<{
   type?: Prisma.EnumLetterTypeFilter<"Letter"> | $Enums.LetterType
   content?: Prisma.StringFilter<"Letter"> | string
   status?: Prisma.EnumLetterStatusFilter<"Letter"> | $Enums.LetterStatus
+  situation?: Prisma.StringNullableFilter<"Letter"> | string | null
+  partyDetails?: Prisma.JsonNullableFilter<"Letter">
   sentAt?: Prisma.DateTimeNullableFilter<"Letter"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Letter"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Letter"> | Date | string
@@ -256,6 +272,8 @@ export type LetterOrderByWithAggregationInput = {
   type?: Prisma.SortOrder
   content?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  situation?: Prisma.SortOrderInput | Prisma.SortOrder
+  partyDetails?: Prisma.SortOrderInput | Prisma.SortOrder
   sentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -274,6 +292,8 @@ export type LetterScalarWhereWithAggregatesInput = {
   type?: Prisma.EnumLetterTypeWithAggregatesFilter<"Letter"> | $Enums.LetterType
   content?: Prisma.StringWithAggregatesFilter<"Letter"> | string
   status?: Prisma.EnumLetterStatusWithAggregatesFilter<"Letter"> | $Enums.LetterStatus
+  situation?: Prisma.StringNullableWithAggregatesFilter<"Letter"> | string | null
+  partyDetails?: Prisma.JsonNullableWithAggregatesFilter<"Letter">
   sentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Letter"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Letter"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Letter"> | Date | string
@@ -285,6 +305,8 @@ export type LetterCreateInput = {
   type: $Enums.LetterType
   content: string
   status?: $Enums.LetterStatus
+  situation?: string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -299,6 +321,8 @@ export type LetterUncheckedCreateInput = {
   type: $Enums.LetterType
   content: string
   status?: $Enums.LetterStatus
+  situation?: string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -311,6 +335,8 @@ export type LetterUpdateInput = {
   type?: Prisma.EnumLetterTypeFieldUpdateOperationsInput | $Enums.LetterType
   content?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumLetterStatusFieldUpdateOperationsInput | $Enums.LetterStatus
+  situation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -325,6 +351,8 @@ export type LetterUncheckedUpdateInput = {
   type?: Prisma.EnumLetterTypeFieldUpdateOperationsInput | $Enums.LetterType
   content?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumLetterStatusFieldUpdateOperationsInput | $Enums.LetterStatus
+  situation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -338,6 +366,8 @@ export type LetterCreateManyInput = {
   type: $Enums.LetterType
   content: string
   status?: $Enums.LetterStatus
+  situation?: string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -349,6 +379,8 @@ export type LetterUpdateManyMutationInput = {
   type?: Prisma.EnumLetterTypeFieldUpdateOperationsInput | $Enums.LetterType
   content?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumLetterStatusFieldUpdateOperationsInput | $Enums.LetterStatus
+  situation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -361,6 +393,8 @@ export type LetterUncheckedUpdateManyInput = {
   type?: Prisma.EnumLetterTypeFieldUpdateOperationsInput | $Enums.LetterType
   content?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumLetterStatusFieldUpdateOperationsInput | $Enums.LetterStatus
+  situation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -383,6 +417,8 @@ export type LetterCountOrderByAggregateInput = {
   type?: Prisma.SortOrder
   content?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  situation?: Prisma.SortOrder
+  partyDetails?: Prisma.SortOrder
   sentAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -395,6 +431,7 @@ export type LetterMaxOrderByAggregateInput = {
   type?: Prisma.SortOrder
   content?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  situation?: Prisma.SortOrder
   sentAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -407,6 +444,7 @@ export type LetterMinOrderByAggregateInput = {
   type?: Prisma.SortOrder
   content?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  situation?: Prisma.SortOrder
   sentAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -495,6 +533,8 @@ export type LetterCreateWithoutDocumentInput = {
   type: $Enums.LetterType
   content: string
   status?: $Enums.LetterStatus
+  situation?: string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -507,6 +547,8 @@ export type LetterUncheckedCreateWithoutDocumentInput = {
   type: $Enums.LetterType
   content: string
   status?: $Enums.LetterStatus
+  situation?: string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -549,6 +591,8 @@ export type LetterScalarWhereInput = {
   type?: Prisma.EnumLetterTypeFilter<"Letter"> | $Enums.LetterType
   content?: Prisma.StringFilter<"Letter"> | string
   status?: Prisma.EnumLetterStatusFilter<"Letter"> | $Enums.LetterStatus
+  situation?: Prisma.StringNullableFilter<"Letter"> | string | null
+  partyDetails?: Prisma.JsonNullableFilter<"Letter">
   sentAt?: Prisma.DateTimeNullableFilter<"Letter"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Letter"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Letter"> | Date | string
@@ -560,6 +604,8 @@ export type LetterCreateWithoutEmailEventsInput = {
   type: $Enums.LetterType
   content: string
   status?: $Enums.LetterStatus
+  situation?: string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -573,6 +619,8 @@ export type LetterUncheckedCreateWithoutEmailEventsInput = {
   type: $Enums.LetterType
   content: string
   status?: $Enums.LetterStatus
+  situation?: string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -600,6 +648,8 @@ export type LetterUpdateWithoutEmailEventsInput = {
   type?: Prisma.EnumLetterTypeFieldUpdateOperationsInput | $Enums.LetterType
   content?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumLetterStatusFieldUpdateOperationsInput | $Enums.LetterStatus
+  situation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -613,6 +663,8 @@ export type LetterUncheckedUpdateWithoutEmailEventsInput = {
   type?: Prisma.EnumLetterTypeFieldUpdateOperationsInput | $Enums.LetterType
   content?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumLetterStatusFieldUpdateOperationsInput | $Enums.LetterStatus
+  situation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -624,6 +676,8 @@ export type LetterCreateManyDocumentInput = {
   type: $Enums.LetterType
   content: string
   status?: $Enums.LetterStatus
+  situation?: string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -635,6 +689,8 @@ export type LetterUpdateWithoutDocumentInput = {
   type?: Prisma.EnumLetterTypeFieldUpdateOperationsInput | $Enums.LetterType
   content?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumLetterStatusFieldUpdateOperationsInput | $Enums.LetterStatus
+  situation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -647,6 +703,8 @@ export type LetterUncheckedUpdateWithoutDocumentInput = {
   type?: Prisma.EnumLetterTypeFieldUpdateOperationsInput | $Enums.LetterType
   content?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumLetterStatusFieldUpdateOperationsInput | $Enums.LetterStatus
+  situation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -659,6 +717,8 @@ export type LetterUncheckedUpdateManyWithoutDocumentInput = {
   type?: Prisma.EnumLetterTypeFieldUpdateOperationsInput | $Enums.LetterType
   content?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumLetterStatusFieldUpdateOperationsInput | $Enums.LetterStatus
+  situation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partyDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -702,6 +762,8 @@ export type LetterSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   type?: boolean
   content?: boolean
   status?: boolean
+  situation?: boolean
+  partyDetails?: boolean
   sentAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -717,6 +779,8 @@ export type LetterSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   type?: boolean
   content?: boolean
   status?: boolean
+  situation?: boolean
+  partyDetails?: boolean
   sentAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -730,6 +794,8 @@ export type LetterSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   type?: boolean
   content?: boolean
   status?: boolean
+  situation?: boolean
+  partyDetails?: boolean
   sentAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -743,12 +809,14 @@ export type LetterSelectScalar = {
   type?: boolean
   content?: boolean
   status?: boolean
+  situation?: boolean
+  partyDetails?: boolean
   sentAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type LetterOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "documentId" | "tone" | "type" | "content" | "status" | "sentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["letter"]>
+export type LetterOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "documentId" | "tone" | "type" | "content" | "status" | "situation" | "partyDetails" | "sentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["letter"]>
 export type LetterInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
   emailEvents?: boolean | Prisma.Letter$emailEventsArgs<ExtArgs>
@@ -774,6 +842,8 @@ export type $LetterPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     type: $Enums.LetterType
     content: string
     status: $Enums.LetterStatus
+    situation: string | null
+    partyDetails: runtime.JsonValue | null
     sentAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -1208,6 +1278,8 @@ export interface LetterFieldRefs {
   readonly type: Prisma.FieldRef<"Letter", 'LetterType'>
   readonly content: Prisma.FieldRef<"Letter", 'String'>
   readonly status: Prisma.FieldRef<"Letter", 'LetterStatus'>
+  readonly situation: Prisma.FieldRef<"Letter", 'String'>
+  readonly partyDetails: Prisma.FieldRef<"Letter", 'Json'>
   readonly sentAt: Prisma.FieldRef<"Letter", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Letter", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Letter", 'DateTime'>

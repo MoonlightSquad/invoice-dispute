@@ -204,6 +204,8 @@
       }
     },
     "settings": {
+      "title": "Settings",
+      "subtitle": "Setting up your language and subscription",
       "global": "General / Localization",
       "billing": "Subscription & Billing",
       "langTitle": "Interface Language",

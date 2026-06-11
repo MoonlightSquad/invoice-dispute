@@ -7,5 +7,5 @@ export type Lang = keyof typeof dictionaries
 export type Dictionary = typeof en
 
 export function getDictionary(lang: string): Dictionary {
-    return dictionaries[(lang as Lang)] ?? dictionaries.en
+    return (dictionaries[(lang as Lang)] ?? dictionaries.en) as Dictionary
 }

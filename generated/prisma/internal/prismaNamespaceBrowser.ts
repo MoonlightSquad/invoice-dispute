@@ -109,6 +109,8 @@ export const LetterScalarFieldEnum = {
   type: 'type',
   content: 'content',
   status: 'status',
+  situation: 'situation',
+  partyDetails: 'partyDetails',
   sentAt: 'sentAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -131,9 +133,12 @@ export const SubscriptionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   lsSubscriptionId: 'lsSubscriptionId',
+  lsCustomerId: 'lsCustomerId',
+  variantId: 'variantId',
   plan: 'plan',
   status: 'status',
   renewsAt: 'renewsAt',
+  endsAt: 'endsAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

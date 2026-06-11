@@ -6,13 +6,21 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { FileText, Send, MailCheck, Clock, ArrowUpRight, Plus } from 'lucide-react'
 
-// Імпортуємо нові клієнтські компоненти (створимо їх нижче)
+// Імпортуємо нові клієнтські компоненти
 import Search from '@/components/Search'
 import Pagination from '@/components/Pagination'
-import {getDictionary} from "@/lib/i18n";
+import { getDictionary } from "@/lib/i18n";
 
 export const metadata = {
     title: 'All Documents',
+}
+
+// 1. СТВОРЮЄМО ІНТЕРФЕЙС ДЛЯ JSON ДАНИХ
+interface ExtractedInvoiceData {
+    clientName?: string;
+    invoiceNumber?: string;
+    amount?: number | string;
+    currency?: string;
 }
 
 export default async function DocumentsPage(props: {
@@ -137,6 +145,9 @@ export default async function DocumentsPage(props: {
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
                             {documents.map((doc) => {
+                                // 2. ПРИВОДИМО ТИП ТУТ
+                                const data = doc.extractedData as ExtractedInvoiceData | null;
+
                                 const latestLetter = doc.letters[doc.letters.length - 1]
                                 const status = latestLetter ? latestLetter.status : 'DRAFT'
 
@@ -149,17 +160,18 @@ export default async function DocumentsPage(props: {
                                                 </div>
                                                 <div>
                                                     <div className="font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
-                                                        {doc.extractedData.clientName || dict.app.dashboard.table_unknown_client}
+                                                        {/* 3. ВИКОРИСТОВУЄМО data ЗАМІСТЬ doc.extractedData */}
+                                                        {data?.clientName || dict.app.dashboard.table_unknown_client || 'Unknown Client'}
                                                     </div>
                                                     <div className="text-xs text-slate-400 font-normal mt-0.5">
-                                                        ID: {doc.extractedData.invoiceNumber || '—'}
+                                                        ID: {data?.invoiceNumber || '—'}
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
                                                 <span className="font-mono font-medium text-slate-900 bg-slate-50 px-2 py-1 rounded-md">
-                                                    {doc.extractedData.amount ? `${doc.extractedData.amount} ${doc.currency || 'USD'}` : '—'}
+                                                    {data?.amount ? `${data.amount} ${data.currency || 'USD'}` : '—'}
                                                 </span>
                                         </td>
                                         <td className="px-6 py-4 text-slate-500 whitespace-nowrap">

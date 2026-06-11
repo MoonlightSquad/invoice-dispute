@@ -48,8 +48,7 @@ model Letter {
   content    String       @db.Text
   status     LetterStatus @default(DRAFT)
 
-  // Нові поля для збереження стану форми в інтерфейсі:
-  situation  String?      @db.Text // Опис ситуації, яку ввів користувач
+  situation  String?      @db.Text
   partyDetails Json?
 
   sentAt     DateTime?
@@ -58,7 +57,7 @@ model Letter {
 
   emailEvents EmailEvent[]
 
-  @@idIndex([documentId])
+  @@index([documentId])
   @@map("letters")
 }
 
@@ -69,7 +68,7 @@ model EmailEvent {
   eventType  String
   occurredAt DateTime @default(now())
 
-  @@idIndex([letterId])
+  @@index([letterId])
   @@map("email_events")
 }
 
@@ -87,7 +86,7 @@ model Subscription {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  @@idIndex([userId])
+  @@index([userId])
   @@map("subscriptions")
 }
 

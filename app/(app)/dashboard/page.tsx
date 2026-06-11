@@ -5,11 +5,20 @@ import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { FileText, Send, MailCheck, Clock, ArrowUpRight, Plus } from 'lucide-react'
-import {getDictionary} from "@/lib/i18n";
+import { getDictionary } from "@/lib/i18n";
 
 export const metadata = {
     title: 'Dashboard',
 }
+
+// 1. Інтерфейс для безпечної типізації даних з JSON
+interface ExtractedInvoiceData {
+    clientName?: string;
+    invoiceNumber?: string;
+    amount?: number | string;
+    currency?: string;
+}
+
 export default async function DashboardPage() {
     const cookieStore = await cookies()
     const supabase = createServerClient(
@@ -18,11 +27,11 @@ export default async function DashboardPage() {
         { cookies: { getAll: () => cookieStore.getAll() } }
     )
 
-    // 1. Перевірка авторизації
+    // Перевірка авторизації
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) redirect('/login')
 
-    // 2. Отримання користувача з нашої БД
+    // Отримання користувача з нашої БД
     const dbUser = await prisma.user.findUnique({
         where: { authId: user.id }
     })
@@ -140,18 +149,26 @@ export default async function DashboardPage() {
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
                             {documents.map((doc) => {
+                                // 2. Приведення типу для безпечного доступу всередині ітератора
+                                const data = doc.extractedData as ExtractedInvoiceData | null;
+
                                 const latestLetter = doc.letters[doc.letters.length - 1]
                                 const status = latestLetter ? latestLetter.status : 'DRAFT'
 
                                 return (
                                     <tr key={doc.id} className="hover:bg-slate-50/50 transition-colors">
                                         <td className="px-6 py-4 font-medium text-slate-900">
-                                            <div className="font-semibold">{doc.extractedData.clientName || dict.app.dashboard.table_unknown_client}</div>
-                                            <div className="text-xs text-slate-400 font-normal mt-0.5">ID: {doc.extractedData.invoiceNumber || '—'}</div>
+                                            <div className="font-semibold">
+                                                {data?.clientName || dict.app.dashboard.table_unknown_client}
+                                            </div>
+                                            <div className="text-xs text-slate-400 font-normal mt-0.5">
+                                                ID: {data?.invoiceNumber || '—'}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4">
                                                 <span className="font-mono font-medium text-slate-950">
-                                                    {doc.extractedData.amount ? `${doc.extractedData.amount} ${doc.currency || 'USD'}` : '—'}
+                                                    {/* ВИПРАВЛЕНО: Зміна doc.currency на data?.currency */}
+                                                    {data?.amount ? `${data.amount} ${data?.currency || 'USD'}` : '—'}
                                                 </span>
                                         </td>
                                         <td className="px-6 py-4 text-slate-500">
