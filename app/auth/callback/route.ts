@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const code = searchParams.get('code')
 
     if (!code) {
-        return NextResponse.redirect(`${origin}/`)
+        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/`)
     }
 
     const cookieStore = await cookies()
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     if (error || !data.user) {
         console.error('Auth callback error:', error)
-        return NextResponse.redirect(`${origin}/`)
+        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/`)
     }
 
     await prisma.user.upsert({
@@ -53,5 +53,5 @@ export async function GET(request: NextRequest) {
         },
     })
 
-    return NextResponse.redirect(`${origin}/dashboard`)
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/dashboard`)
 }
