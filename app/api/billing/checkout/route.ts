@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { Plan } from '@/generated/prisma/enums'
+import * as Sentry from "@sentry/nextjs";
 
 export async function POST(req: NextRequest) {
     try {
@@ -119,7 +120,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ url: resData.pageUrl })
 
     } catch (error) {
-        console.error('Billing Checkout Error:', error)
+        Sentry.captureException(error)
+
         return NextResponse.json({ error: 'checkout_failed' }, { status: 500 })
     }
 }

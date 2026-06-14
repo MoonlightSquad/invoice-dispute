@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { Plan } from '@/generated/prisma/enums'
+import * as Sentry from "@sentry/nextjs";
 export async function POST(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url)
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ received: true })
 
     } catch (error) {
-        console.error('Webhook processing error:', error)
+        Sentry.captureException(error)
 
         return NextResponse.json({ error: 'Internal Error' }, { status: 500 })
     }

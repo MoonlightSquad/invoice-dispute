@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { PDFParse } from 'pdf-parse'
+import * as Sentry from "@sentry/nextjs";
 
 // Функція для інтелектуального аналізу тексту через Groq
 async function extractInvoiceDataWithGroq(text: string): Promise<Record<string, string>> {
@@ -111,109 +112,121 @@ async function extractInvoiceDataWithGroq(text: string): Promise<Record<string, 
 }
 
 export async function POST(req: NextRequest) {
-    const cookieStore = await cookies()
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        { cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} } }
-    )
-
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-    const dbUser = await prisma.user.findUnique({ where: { authId: user.id } })
-    if (!dbUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
-
-    const LIMITS = { FREE: 3, STARTER: 30, PRO: Infinity }
-    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-    const usedThisMonth = await prisma.document.count({
-        where: { userId: dbUser.id, createdAt: { gte: startOfMonth } },
-    })
-    if (usedThisMonth >= LIMITS[dbUser.plan]) {
-        return NextResponse.json({ error: 'limit_reached' }, { status: 403 })
-    }
-
-    const formData = await req.formData()
-    const file = formData.get('file') as File
-    if (!file) return NextResponse.json({ error: 'No file' }, { status: 400 })
-
-    if (file.type !== 'application/pdf') {
-        return NextResponse.json({ error: 'invalid_type' }, { status: 400 })
-    }
-    if (file.size > 10 * 1024 * 1024) {
-        return NextResponse.json({ error: 'file_too_large' }, { status: 400 })
-    }
-
-    const arrayBuffer = await file.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
-
-    let extractedData: Record<string, string> = {}
-
     try {
-        const parser = new PDFParse({ data: new Uint8Array(buffer) })
-        const parsed = await parser.getText()
+        const cookieStore = await cookies()
+        const supabase = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            { cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} } }
+        )
 
-        const groqFields = await extractInvoiceDataWithGroq(parsed.text)
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-        extractedData = {
-            ...groqFields,
-            rawText: parsed.text.slice(0, 4000)
+        const dbUser = await prisma.user.findUnique({ where: { authId: user.id } })
+        if (!dbUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+        const LIMITS = { FREE: 3, STARTER: 30, PRO: Infinity }
+        const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+        const usedThisMonth = await prisma.document.count({
+            where: { userId: dbUser.id, createdAt: { gte: startOfMonth } },
+        })
+        if (usedThisMonth >= LIMITS[dbUser.plan]) {
+            return NextResponse.json({ error: 'limit_reached' }, { status: 403 })
         }
 
-        await parser.destroy()
+        const formData = await req.formData()
+        const file = formData.get('file') as File
+        if (!file) return NextResponse.json({ error: 'No file' }, { status: 400 })
+
+        if (file.type !== 'application/pdf') {
+            return NextResponse.json({ error: 'invalid_type' }, { status: 400 })
+        }
+        if (file.size > 10 * 1024 * 1024) {
+            return NextResponse.json({ error: 'file_too_large' }, { status: 400 })
+        }
+
+        const arrayBuffer = await file.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+
+        let extractedData: Record<string, string> = {}
+
+        try {
+            const parser = new PDFParse({ data: new Uint8Array(buffer) })
+            const parsed = await parser.getText()
+
+            const groqFields = await extractInvoiceDataWithGroq(parsed.text)
+
+            extractedData = {
+                ...groqFields,
+                rawText: parsed.text.slice(0, 4000)
+            }
+
+            await parser.destroy()
+        } catch (error) {
+            console.error('Помилка парсингу PDF:', error)
+            extractedData = {
+                amount: '', date: '', invoiceNumber: '', rawText: '',
+                iban: '', edrpou: '', swiftBic: '', bankName: '', paymentPurpose: ''
+            }
+        }
+
+        const fileName = `${dbUser.id}/${Date.now()}-${file.name}`
+        const { error: storageError } = await supabase.storage
+            .from('invoices')
+            .upload(fileName, buffer, { contentType: 'application/pdf' })
+
+        if (storageError) {
+            console.log(storageError)
+            return NextResponse.json({ error: 'upload_failed' }, { status: 500 })
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+            .from('invoices')
+            .getPublicUrl(fileName)
+
+        const document = await prisma.document.create({
+            data: {
+                userId: dbUser.id,
+                title: file.name.replace('.pdf', ''),
+                pdfUrl: publicUrl,
+                extractedData,
+            },
+        })
+
+        return NextResponse.json({ document })
     } catch (error) {
-        console.error('Помилка парсингу PDF:', error)
-        extractedData = {
-            amount: '', date: '', invoiceNumber: '', rawText: '',
-            iban: '', edrpou: '', swiftBic: '', bankName: '', paymentPurpose: ''
-        }
+        Sentry.captureException(error)
+
+        return NextResponse.json({ error: 'internal_error' }, { status: 500 })
     }
-
-    const fileName = `${dbUser.id}/${Date.now()}-${file.name}`
-    const { error: storageError } = await supabase.storage
-        .from('invoices')
-        .upload(fileName, buffer, { contentType: 'application/pdf' })
-
-    if (storageError) {
-        console.log(storageError)
-        return NextResponse.json({ error: 'upload_failed' }, { status: 500 })
-    }
-
-    const { data: { publicUrl } } = supabase.storage
-        .from('invoices')
-        .getPublicUrl(fileName)
-
-    const document = await prisma.document.create({
-        data: {
-            userId: dbUser.id,
-            title: file.name.replace('.pdf', ''),
-            pdfUrl: publicUrl,
-            extractedData,
-        },
-    })
-
-    return NextResponse.json({ document })
 }
 
 export async function GET(req: NextRequest) {
-    const cookieStore = await cookies()
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        { cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} } }
-    )
+    try {
+        const cookieStore = await cookies()
+        const supabase = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            { cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} } }
+        )
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const dbUser = await prisma.user.findUnique({ where: { authId: user.id } })
-    if (!dbUser) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+        const dbUser = await prisma.user.findUnique({ where: { authId: user.id } })
+        if (!dbUser) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-    const documents = await prisma.document.findMany({
-        where: { userId: dbUser.id },
-        orderBy: { createdAt: 'desc' },
-        include: { letters: { orderBy: { createdAt: 'desc' }, take: 1 } },
-    })
+        const documents = await prisma.document.findMany({
+            where: { userId: dbUser.id },
+            orderBy: { createdAt: 'desc' },
+            include: { letters: { orderBy: { createdAt: 'desc' }, take: 1 } },
+        })
 
-    return NextResponse.json({ documents })
+        return NextResponse.json({ documents })
+    } catch (error) {
+        Sentry.captureException(error)
+
+        return NextResponse.json({ error: 'internal_error' }, { status: 500 })
+    }
 }

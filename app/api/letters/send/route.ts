@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { Resend } from 'resend'
+import * as Sentry from "@sentry/nextjs";
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -173,7 +174,8 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ success: true, letter: updatedLetter })
     } catch (error) {
-        console.error('Email Delivery Error:', error)
+        Sentry.captureException(error)
+
         return NextResponse.json({ error: 'email_delivery_failed' }, { status: 500 })
     }
 }

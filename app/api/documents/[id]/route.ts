@@ -27,7 +27,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     if (!document) return NextResponse.json({ error: 'Document not found' }, { status: 404 })
 
-    // ПОВЕРТАЄМО також план користувача (FREE, STARTER, PRO)
     return NextResponse.json({
         document,
         plan: dbUser.plan

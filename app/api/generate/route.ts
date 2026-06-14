@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import * as Sentry from "@sentry/nextjs";
 
 export async function POST(req: NextRequest) {
     const cookieStore = await cookies()
@@ -141,7 +142,8 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ letter })
     } catch (error) {
-        console.error('Generation Error:', error)
+        Sentry.captureException(error)
+
         return NextResponse.json({ error: 'generation_failed' }, { status: 500 })
     }
 }

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
+import * as Sentry from "@sentry/nextjs";
 
 export async function POST(req: NextRequest) {
     try {
@@ -28,6 +29,8 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ success: true })
     } catch (error) {
+        Sentry.captureException(error)
+
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }

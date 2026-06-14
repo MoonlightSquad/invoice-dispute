@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import * as Sentry from "@sentry/nextjs";
 
 export async function GET(req: NextRequest) {
     try {
@@ -51,7 +52,8 @@ export async function GET(req: NextRequest) {
         })
 
     } catch (error) {
-        console.error('Billing Payments API Error:', error)
+        Sentry.captureException(error)
+
         return NextResponse.json({ error: 'internal_error' }, { status: 500 })
     }
 }

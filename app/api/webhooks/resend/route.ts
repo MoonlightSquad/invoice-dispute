@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import crypto from 'crypto'
+import * as Sentry from "@sentry/nextjs";
 
 const RESEND_WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET || ''
 
@@ -69,7 +70,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ received: true }, { status: 200 })
 
     } catch (error) {
-        console.error('Resend Webhook Error:', error)
+        Sentry.captureException(error)
+
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }
