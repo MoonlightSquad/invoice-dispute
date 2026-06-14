@@ -182,8 +182,7 @@ export async function POST(req: NextRequest) {
         const { error: storageError } = await supabase.storage
             .from('invoices')
             .upload(fileName, file, {
-                contentType: 'application/pdf',
-                upsert: true
+                contentType: 'application/pdf'
             })
 
         if (storageError) {
