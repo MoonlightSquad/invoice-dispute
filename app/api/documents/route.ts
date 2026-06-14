@@ -173,13 +173,21 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        const fileName = `${dbUser.id}/${Date.now()}-${file.name}`
+        const sanitizedName = file.name
+            .replace(/\s+/g, '_')
+            .replace(/[^a-zA-Z0-9._-]/g, '')
+
+        const fileName = `${dbUser.id}/${Date.now()}-${sanitizedName}`
+
         const { error: storageError } = await supabase.storage
             .from('invoices')
-            .upload(fileName, buffer, { contentType: 'application/pdf' })
+            .upload(fileName, file, {
+                contentType: 'application/pdf',
+                upsert: true
+            })
 
         if (storageError) {
-            console.log(storageError)
+            console.error('Supabase Storage Error:', storageError)
             return NextResponse.json({ error: 'upload_failed' }, { status: 500 })
         }
 
