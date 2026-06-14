@@ -30,7 +30,7 @@ export default function PublicPaymentClient({ data }: { data: PaymentData }) {
         "SCT",
         data.swiftBic || "",
         data.senderCompany,
-        data.iban.replace(/\s+/g, ''),
+        data.iban,
         cleanAmount ? `${currency}${cleanAmount}` : "",
         "",
         "",
