@@ -225,6 +225,23 @@
         "free": ["До 3 документів", "Базовий аналіз ШІ", "Чернетки листів"],
         "starter": ["До 30 документів/міс", "Пріоритетний аналіз ШІ", "Пряме надсилання (Повторне надсилання)"],
         "pro": ["Необмежена кількість документів", "Налаштування підказок ШІ", "Відстеження особистого статусу"]
+      },
+      "notifications": {
+        "title": "Notification Settings",
+        "desc": "Manage how and where updates on your claim statuses are delivered.",
+        "inApp": "🔔 In-App Push (Bell Icons)",
+        "email": "📧 Email Notifications",
+        "telegram": "💬 Telegram Notifications",
+        "viewed": "Letter viewed by debtor",
+        "viewedDesc": "When the debtor opens the PayHub checkout screen",
+        "paid": "Payment claimed by debtor",
+        "paidDesc": "When the client marks the invoice as paid",
+        "tgConnect": "Connect Telegram Bot",
+        "tgActive": "✓ Telegram notifications active",
+        "save": "Save Settings",
+        "saving": "Saving...",
+        "success": "Settings saved successfully",
+        "error": "Failed to save notification preferences"
       }
     }
   },
@@ -234,7 +251,7 @@
     "sections": [
       {
         "title": "1. Вступ",
-        "content": "У Invoice Dispute Resolver ми поважаємо вашу конфіденційність. Ця політика пояснює, як ми збираємо, використовуємо та захищаємо ваші дані, коли ви користуєтеся нашим сервісом."
+        "content": "У Moonlight ми поважаємо вашу конфіденційність. Ця політика пояснює, як ми збираємо, використовуємо та захищаємо ваші дані, коли ви користуєтеся нашим сервісом."
       },
       {
         "title": "2. Дані, які ми збираємо",
@@ -271,7 +288,7 @@
 
       {
         "title": "1. Прийняття умов",
-        "content": "Використовуючи Invoice Dispute Resolver, ви підтверджуєте, що прочитали, зрозуміли та погоджуєтеся з цими Умовами. Якщо ви дієте від імені компанії, ви гарантуєте, що маєте відповідні повноваження для цього."
+        "content": "Використовуючи Moonlight, ви підтверджуєте, що прочитали, зрозуміли та погоджуєтеся з цими Умовами. Якщо ви дієте від імені компанії, ви гарантуєте, що маєте відповідні повноваження для цього."
       },
       {
         "title": "2. Опис послуги та застереження",
@@ -289,7 +306,7 @@
       },
       {
         "title": "5. Інтелектуальна власність",
-        "content": "Весь контент сайту, дизайн, логотипи та програмний код належать власникам Invoice Dispute Resolver. Ви отримуєте обмежену, невиключну ліцензію на використання згенерованих документів для власних бізнес-потреб."
+        "content": "Весь контент сайту, дизайн, логотипи та програмний код належать власникам Moonlight. Ви отримуєте обмежену, невиключну ліцензію на використання згенерованих документів для власних бізнес-потреб."
       },
 
       {

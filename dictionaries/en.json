@@ -1,7 +1,7 @@
 {
   "meta": {
     "badge": "✨ Powered by Gemini 2.0 Flash API",
-    "title": "Invoice Dispute Resolver — Get paid with AI-powered demand letters",
+    "title": "Moonlight — Get paid with AI-powered demand letters",
     "description": "Client hasn't paid your invoice? Automatically generate professional dispute and pre-litigation letters from your PDF invoices in 30 seconds."
   },
   "nav": {
@@ -13,7 +13,7 @@
     "title_1": "Client hasn't paid your invoice?",
     "title_2": "Get a professional dispute letter in 30 seconds.",
     "description": "Stop wasting nerves on arguments and money on lawyers. Your client will think you have an in-house legal team. Upload your PDF invoice, select a tone, and let AI do the work.",
-    "cta_button": "Resolve Invoice Dispute",
+    "cta_button": "Resolve Moonlight",
     "free_note": "3 free documents every month"
   },
   "problem": {
@@ -26,7 +26,7 @@
     "p3_desc": "Instead of focusing on new paid projects, you spend nights drafting angry, ineffective emails."
   },
   "features": {
-    "title": "How Invoice Dispute Resolver works",
+    "title": "How Moonlight works",
     "step1_title": "Upload Invoice",
     "step1_desc": "Drag & drop your PDF invoice. Our system automatically extracts amounts, dates, and names.",
     "step2_title": "Choose Tone",
@@ -78,7 +78,7 @@
     "button": "Start for Free"
   },
   "footer": {
-    "rights": "© 2026 Invoice Dispute Resolver. All rights reserved."
+    "rights": "© 2026 Moonlight. All rights reserved."
   },
   "auth": {
     "title": "Sign in to your account",
@@ -100,7 +100,7 @@
     },
     "dashboard": {
       "title": "Dashboard",
-      "subtitle": "Manage your invoice disputes",
+      "subtitle": "Manage your Moonlights",
       "new_document": "New Document",
       "no_documents": "No documents yet",
       "no_documents_desc": "Upload your first invoice to generate a dispute letter",
@@ -225,6 +225,23 @@
         "free": ["Up to 3 documents", "Basic AI analysis", "Draft letters"],
         "starter": ["Up to 30 documents / mo", "Priority AI analysis", "Direct sending (Resend)"],
         "pro": ["Unlimited documents", "Custom AI prompts", "Personal status tracking"]
+      },
+      "notifications": {
+        "title": "Notification Settings",
+        "desc": "Manage how and where updates on your claim statuses are delivered.",
+        "inApp": "🔔 In-App Push (Bell Icons)",
+        "email": "📧 Email Notifications",
+        "telegram": "💬 Telegram Notifications",
+        "viewed": "Letter viewed by debtor",
+        "viewedDesc": "When the debtor opens the PayHub checkout screen",
+        "paid": "Payment claimed by debtor",
+        "paidDesc": "When the client marks the invoice as paid",
+        "tgConnect": "Connect Telegram Bot",
+        "tgActive": "✓ Telegram notifications active",
+        "save": "Save Settings",
+        "saving": "Saving...",
+        "success": "Settings saved successfully",
+        "error": "Failed to save notification preferences"
       }
     }
   },
@@ -234,7 +251,7 @@
     "sections": [
       {
         "title": "1. Introduction",
-        "content": "At Invoice Dispute Resolver, we respect your privacy. This policy explains how we collect, use, and protect your data when you use our service."
+        "content": "At Moonlight, we respect your privacy. This policy explains how we collect, use, and protect your data when you use our service."
       },
       {
         "title": "2. Data We Collect",
@@ -268,7 +285,7 @@
     "sections": [
       {
         "title": "1. Acceptance of Terms",
-        "content": "By using Invoice Dispute Resolver, you confirm that you have read, understood, and agree to be bound by these Terms. If you are acting on behalf of a company, you warrant that you have the appropriate authority to do so."
+        "content": "By using Moonlight, you confirm that you have read, understood, and agree to be bound by these Terms. If you are acting on behalf of a company, you warrant that you have the appropriate authority to do so."
       },
       {
         "title": "2. Service Description and Disclaimer",
@@ -284,7 +301,7 @@
       },
       {
         "title": "5. Intellectual Property",
-        "content": "All site content, design, logos and program code belong to the owners of Invoice Dispute Resolver. You receive a limited, non-exclusive license to use the generated documents for your own business needs."
+        "content": "All site content, design, logos and program code belong to the owners of Moonlight. You receive a limited, non-exclusive license to use the generated documents for your own business needs."
       },
       {
         "title": "6. Change of Terms",

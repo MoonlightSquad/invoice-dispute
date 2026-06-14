@@ -3,6 +3,7 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { Plan } from '@/generated/prisma/enums'
 
 export async function POST(req: NextRequest) {
     try {
@@ -19,49 +20,103 @@ export async function POST(req: NextRequest) {
         const dbUser = await prisma.user.findUnique({ where: { authId: user.id } })
         if (!dbUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
-        const { variantId } = await req.json()
-        if (!variantId) return NextResponse.json({ error: 'Variant ID is required' }, { status: 400 })
+        const { planType } = await req.json()
+        if (!planType) return NextResponse.json({ error: 'Plan type is required' }, { status: 400 })
 
-        const response = await fetch('https://api.lemonsqueezy.com/v1/checkouts', {
+        let amount = 0
+        let targetPlan: Plan
+
+        if (planType === 'FREE') {
+            targetPlan = Plan.FREE
+        } else if (planType === 'STARTER') {
+            amount = 1900
+            targetPlan = Plan.STARTER
+        } else if (planType === 'PRO') {
+            amount = 4900
+            targetPlan = Plan.PRO
+        } else {
+            return NextResponse.json({ error: 'Invalid plan type' }, { status: 400 })
+        }
+
+        const activeSubscriptions = await prisma.subscription.findMany({
+            where: {
+                userId: dbUser.id,
+                status: 'success'
+            }
+        })
+
+        for (const sub of activeSubscriptions) {
+            if (sub.lsSubscriptionId && sub.status !== 'cancelled') {
+                try {
+                    const removeResponse = await fetch('https://api.monobank.ua/api/merchant/subscription/remove', {
+                        method: 'POST',
+                        headers: {
+                            'X-Token': process.env.MONO_API_KEY!,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            subscriptionId: sub.lsSubscriptionId
+                        })
+                    })
+
+                    const removeData = await removeResponse.json()
+
+                    if (!removeResponse.ok) {
+                        console.error(`Monobank Subscription Remove Error (${sub.lsSubscriptionId}):`, removeData)
+                    } else {
+                        console.log(`Successfully cancelled subscription in Monobank: ${sub.lsSubscriptionId}`)
+                    }
+                } catch (err) {
+                    console.error(`Failed to communicate with Monobank remove endpoint for ${sub.lsSubscriptionId}:`, err)
+                }
+            }
+
+            await prisma.subscription.update({
+                where: { id: sub.id },
+                data: {
+                    status: 'cancelled',
+                    endsAt: new Date()
+                }
+            })
+        }
+
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+
+        if (targetPlan === Plan.FREE) {
+            await prisma.user.update({
+                where: { id: dbUser.id },
+                data: { plan: Plan.FREE }
+            })
+
+            return NextResponse.json({ url: `${baseUrl}/settings` })
+        }
+
+        const response = await fetch('https://api.monobank.ua/api/merchant/subscription/create', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${process.env.LEMON_SQUEEZY_API_KEY}`,
-                'Content-Type': 'application/vnd.api+json',
-                'Accept': 'application/vnd.api+json'
+                'X-Token': process.env.MONO_API_KEY!,
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                data: {
-                    type: 'checkouts',
-                    attributes: {
-                        checkout_data: {
-                            email: dbUser.email,
-                            name: dbUser.name || '',
-                            custom: {
-                                user_id: dbUser.id
-                            }
-                        },
-                        redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings`,
-                    },
-                    relationships: {
-                        store: {
-                            data: { type: 'stores', id: process.env.LEMON_SQUEEZY_STORE_ID }
-                        },
-                        variant: {
-                            data: { type: 'variants', id: variantId.toString() }
-                        }
-                    }
-                }
+                amount: amount,
+                ccy: 840,
+                redirectUrl: `${baseUrl}/settings`,
+                webHookUrls: {
+                    statusUrl: `${baseUrl}/api/webhooks/billing?userId=${dbUser.id}&plan=${targetPlan}`,
+                    chargeUrl: `${baseUrl}/api/webhooks/billing?userId=${dbUser.id}&plan=${targetPlan}`
+                },
+                interval: '1m',
+                validity: 2592000
             })
         })
 
         const resData = await response.json()
         if (!response.ok) {
-            console.error('Lemon Squeezy Error:', resData)
-            throw new Error('Failed to create checkout session')
+            console.error('Monobank Error:', resData)
+            throw new Error(resData.errText || 'Failed to create Monobank subscription')
         }
 
-        const checkoutUrl = resData.data?.attributes?.url
-        return NextResponse.json({ url: checkoutUrl })
+        return NextResponse.json({ url: resData.pageUrl })
 
     } catch (error) {
         console.error('Billing Checkout Error:', error)

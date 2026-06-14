@@ -167,8 +167,7 @@ export default async function DashboardPage() {
                                         </td>
                                         <td className="px-6 py-4">
                                                 <span className="font-mono font-medium text-slate-950">
-                                                    {/* ВИПРАВЛЕНО: Зміна doc.currency на data?.currency */}
-                                                    {data?.amount ? `${data.amount} ${data?.currency || 'USD'}` : '—'}
+                                                    {data?.amount ? `${data.amount}` : '—'}
                                                 </span>
                                         </td>
                                         <td className="px-6 py-4 text-slate-500">

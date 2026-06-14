@@ -8,7 +8,7 @@ async function getDictionary(lang: string) {
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
     const { lang } = await params;
     const dict = await getDictionary(lang);
-    return { title: `${dict.privacy.title} | Invoice Dispute Resolver` };
+    return { title: `${dict.privacy.title} | Moonlight` };
 }
 
 export default async function PrivacyPage({ params }: { params: Promise<{ lang: string }> }) {

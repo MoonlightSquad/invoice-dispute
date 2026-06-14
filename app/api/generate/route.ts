@@ -1,4 +1,3 @@
-// app/api/generate/route.ts
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
@@ -23,12 +22,14 @@ export async function POST(req: NextRequest) {
         situation,
         tone,
         type,
+        letterLang,
         senderName,
         senderCompany,
         senderEmail,
         senderPhone,
         recipientName,
-        recipientAddress
+        recipientAddress,
+        paymentUrl // Приймаємо нове посилання з фронтенду
     } = await req.json()
 
     const document = await prisma.document.findUnique({
@@ -38,18 +39,31 @@ export async function POST(req: NextRequest) {
 
     const extracted = (document.extractedData as Record<string, string>) || {}
 
-    const systemPrompt = `You are an expert legal assistant helping a freelancer or small business resolve an invoice dispute.
-        Generate a formal dispute letter based on the provided details.
-        The letter must be written in the language appropriate to the context (if the situation or invoice is in Ukrainian, write in Ukrainian. If in English, write in English).
+    // BACKEND ENFORCEMENT: Перевіряємо тарифний план користувача
+    const currentPlan = dbUser.plan || 'FREE'
+    const finalTone = currentPlan === 'FREE' ? 'business' : tone
+
+    const targetLanguageName = letterLang === 'uk' ? 'Ukrainian' : 'English'
+
+    const systemPrompt = `You are an expert legal and business assistant helping a freelancer or small business resolve an invoice or payment issue.
+        Generate a professional letter based on the provided details.
+        
+        CRITICAL LANGUAGE REQUIREMENT:
+        The entire letter MUST be written strictly in the ${targetLanguageName} language. Do not use any other language under any circumstances.
         
         CRITICAL INSTRUCTIONS:
-        1. Write a complete, professional, ready-to-send letter.
+        1. Write a complete, professional, ready-to-send letter or email body.
         2. Use the provided SENDER and RECIPIENT info. If any specific data is "Not specified", only then use professional placeholders like [Your Name], [Company Name], etc.
         3. Do NOT hallucinate fake emails, phone numbers, or addresses if they are not provided.
-        4. Return ONLY the text of the letter. Do not include any introductions, markdown commentary, or conversational filler.`
+        4. PAYMENT LINK INTEGRATION: If a PAYMENT HUB LINK is provided and is not "Not specified", you MUST naturally integrate it into the letter text (usually near the end or as a separate clear call-to-action paragraph). 
+           - For Ukrainian: Write something professional like "Для швидкої та зручної оплати в один клік (карткою, через IBAN або QR-код) ви можете скористатися цим посиланням: [PAYMENT_URL]"
+           - For English: Write something professional like "For a quick and secure one-click payment via card, IBAN, or QR code, please use the following secure payment link: [PAYMENT_URL]"
+           Replace [PAYMENT_URL] with the actual URL string provided. If the link is "Not specified", do not mention any payment links at all.
+        5. Return ONLY the text of the letter. Do not include any introductions, markdown commentary, or conversational filler.`
 
     const userPrompt = `LETTER TYPE: ${type}
-        TONE: ${tone}
+        TONE: ${finalTone}
+        TARGET LANGUAGE: ${targetLanguageName}
         
         SENDER INFO (YOU):
         - Name: ${senderName || 'Not specified'}
@@ -65,6 +79,9 @@ export async function POST(req: NextRequest) {
         - Invoice Number: ${extracted.invoiceNumber || 'Not specified'}
         - Date: ${extracted.date || 'Not specified'}
         - Amount Due: ${extracted.amount || 'Not specified'}
+        
+        PAYMENT HUB LINK (CTA):
+        - URL: ${paymentUrl || 'Not specified'}
         
         USER SITUATION:
         "${situation}"
@@ -106,7 +123,7 @@ export async function POST(req: NextRequest) {
         const letter = await prisma.letter.create({
             data: {
                 documentId: document.id,
-                tone: tone.toUpperCase() as any,
+                tone: finalTone.toUpperCase() as any,
                 type: type.toUpperCase() as any,
                 content: letterContent,
                 status: 'DRAFT',

@@ -55,7 +55,9 @@ export const ModelName = {
   Document: 'Document',
   Letter: 'Letter',
   EmailEvent: 'EmailEvent',
-  Subscription: 'Subscription'
+  Subscription: 'Subscription',
+  NotificationSettings: 'NotificationSettings',
+  TelegramSession: 'TelegramSession'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -144,6 +146,34 @@ export const SubscriptionScalarFieldEnum = {
 } as const
 
 export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const NotificationSettingsScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  inAppLetterViewed: 'inAppLetterViewed',
+  inAppPaymentClaimed: 'inAppPaymentClaimed',
+  emailLetterViewed: 'emailLetterViewed',
+  emailPaymentClaimed: 'emailPaymentClaimed',
+  tgLetterViewed: 'tgLetterViewed',
+  tgPaymentClaimed: 'tgPaymentClaimed',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationSettingsScalarFieldEnum = (typeof NotificationSettingsScalarFieldEnum)[keyof typeof NotificationSettingsScalarFieldEnum]
+
+
+export const TelegramSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  chatId: 'chatId',
+  telegramToken: 'telegramToken',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TelegramSessionScalarFieldEnum = (typeof TelegramSessionScalarFieldEnum)[keyof typeof TelegramSessionScalarFieldEnum]
 
 
 export const SortOrder = {

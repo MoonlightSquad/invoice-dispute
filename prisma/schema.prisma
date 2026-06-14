@@ -21,6 +21,9 @@ model User {
   documents     Document[]
   subscriptions Subscription[]
 
+  notificationSettings NotificationSettings?
+  telegramSession      TelegramSession?
+
   @@map("users")
 }
 
@@ -88,6 +91,38 @@ model Subscription {
 
   @@index([userId])
   @@map("subscriptions")
+}
+
+model NotificationSettings {
+  id                  String   @id @default(uuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  inAppLetterViewed   Boolean  @default(true)
+  inAppPaymentClaimed Boolean  @default(true)
+  emailLetterViewed   Boolean  @default(false)
+  emailPaymentClaimed Boolean  @default(true)
+  tgLetterViewed      Boolean  @default(false)
+  tgPaymentClaimed    Boolean  @default(true)
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@map("notification_settings")
+}
+
+model TelegramSession {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  chatId        String?  @unique
+  telegramToken String   @unique @default(uuid())
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("telegram_sessions")
 }
 
 enum Plan {

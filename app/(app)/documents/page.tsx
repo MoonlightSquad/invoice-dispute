@@ -171,7 +171,7 @@ export default async function DocumentsPage(props: {
                                         </td>
                                         <td className="px-6 py-4">
                                                 <span className="font-mono font-medium text-slate-900 bg-slate-50 px-2 py-1 rounded-md">
-                                                    {data?.amount ? `${data.amount} ${data.currency || 'USD'}` : '—'}
+                                                    {data?.amount ? `${data.amount}` : '—'}
                                                 </span>
                                         </td>
                                         <td className="px-6 py-4 text-slate-500 whitespace-nowrap">

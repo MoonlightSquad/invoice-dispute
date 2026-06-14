@@ -14,6 +14,18 @@ interface DocumentData {
         date?: string
         invoiceNumber?: string
         rawText?: string
+        senderName?: string
+        senderCompany?: string
+        senderEmail?: string
+        senderPhone?: string
+        recipientName?: string
+        recipientAddress?: string
+        // Нові платіжні поля
+        iban?: string
+        edrpou?: string
+        swiftBic?: string
+        bankName?: string
+        paymentPurpose?: string
     }
     letters: Array<{
         id: string
@@ -56,9 +68,17 @@ export default function DocumentViewClient({ id, lang }: { id: string; lang: str
     const [recipientName, setRecipientName] = useState('')
     const [recipientAddress, setRecipientAddress] = useState('')
 
+    // Нові стейти для фінансових реквізитів
+    const [iban, setIban] = useState('')
+    const [edrpou, setEdrpou] = useState('')
+    const [swiftBic, setSwiftBic] = useState('')
+    const [bankName, setBankName] = useState('')
+    const [paymentPurpose, setPaymentPurpose] = useState('')
+
     const [situation, setSituation] = useState('')
     const [tone, setTone] = useState('business')
     const [type, setType] = useState('claim')
+    const [letterLang, setLetterLang] = useState(lang)
 
     const [letterId, setLetterId] = useState<string | null>(null)
     const [letterContent, setLetterContent] = useState('')
@@ -66,6 +86,16 @@ export default function DocumentViewClient({ id, lang }: { id: string; lang: str
 
     const [toEmail, setToEmail] = useState('')
     const [emailSubject, setEmailSubject] = useState('')
+
+    // Локалізація кастомних текстових елементів
+    const txtUpgradeRequired = lang === 'uk' ? 'Відправка листів недоступна на безкоштовному тарифі.' : 'Sending emails is not available on the free plan.'
+    const txtBtnPaidOnly = lang === 'uk' ? '🔒 Доступно у платних тарифах' : '🔒 Available in paid plans'
+    const txtNoticePaidOnly = lang === 'uk' ? 'Пряма відправка email доступна лише для тарифів Starter та Pro.' : 'Direct email delivery is only available for Starter and Pro plans.'
+    const txtLetterLangLabel = lang === 'uk' ? 'Мова листа' : 'Letter Language'
+
+    const txtPaymentWidgetTitle = lang === 'uk' ? '🇺🇦 Швидка оплата (UA)' : '🌐 International Wire / SEPA'
+    const txtPaymentWidgetDesc = lang === 'uk' ? 'Реквізити автоматично очищені від сміття' : 'Payment details extracted and cleaned'
+    const txtCopyCleanIban = lang === 'uk' ? 'Чистий IBAN скопійовано!' : 'Clean IBAN copied successfully!'
 
     useEffect(() => {
         async function fetchDocument() {
@@ -75,31 +105,45 @@ export default function DocumentViewClient({ id, lang }: { id: string; lang: str
                 const data = await res.json()
 
                 setDocument(data.document)
-                setUserPlan(data.plan || 'FREE')
+                const plan = data.plan || 'FREE'
+                setUserPlan(plan)
 
-                setAmount(data.document.extractedData?.amount || '')
-                setDate(data.document.extractedData?.date || '')
-                setInvoiceNumber(data.document.extractedData?.invoiceNumber || '')
+                const ext = data.document.extractedData || {}
+                setAmount(ext.amount || '')
+                setDate(ext.date || '')
+                setInvoiceNumber(ext.invoiceNumber || '')
+                setSenderName(ext.senderName || '')
+                setSenderCompany(ext.senderCompany || '')
+                setSenderEmail(ext.senderEmail || '')
+                setSenderPhone(ext.senderPhone || '')
+                setRecipientName(ext.recipientName || '')
+                setRecipientAddress(ext.recipientAddress || '')
+
+                // Наповнення нових фінансових полів з бекенду
+                setIban(ext.iban || '')
+                setEdrpou(ext.edrpou || '')
+                setSwiftBic(ext.swiftBic || '')
+                setBankName(ext.bankName || '')
+                setPaymentPurpose(ext.paymentPurpose || (ext.invoiceNumber ? `Payment for invoice No ${ext.invoiceNumber}` : ''))
+
+                setEmailSubject(`${dict.app.documentView.subjectPrefix} ${ext.invoiceNumber || ''}`)
 
                 if (data.document.letters?.length > 0) {
                     const lastLetter = data.document.letters[0]
                     setLetterId(lastLetter.id)
                     setLetterContent(lastLetter.content)
                     setLetterStatus(lastLetter.status)
-                    setTone(lastLetter.tone.toLowerCase())
                     setType(lastLetter.type.toLowerCase())
-
+                    setTone(plan === 'FREE' ? 'business' : lastLetter.tone.toLowerCase())
                     setSituation(lastLetter.situation || '')
 
                     const details = lastLetter.partyDetails || {}
-                    setSenderName(details.senderName || '')
-                    setSenderCompany(details.senderCompany || '')
-                    setSenderEmail(details.senderEmail || '')
-                    setSenderPhone(details.senderPhone || '')
-                    setRecipientName(details.recipientName || '')
-                    setRecipientAddress(details.recipientAddress || '')
-
-                    setEmailSubject(`${dict.app.documentView.subjectPrefix} ${data.document.extractedData?.invoiceNumber || ''}`)
+                    if (details.senderName) setSenderName(details.senderName)
+                    if (details.senderCompany) setSenderCompany(details.senderCompany)
+                    if (details.senderEmail) setSenderEmail(details.senderEmail)
+                    if (details.senderPhone) setSenderPhone(details.senderPhone)
+                    if (details.recipientName) setRecipientName(details.recipientName)
+                    if (details.recipientAddress) setRecipientAddress(details.recipientAddress)
                 }
             } catch {
                 toast.error(dict.app.documentView.toasts.loadError)
@@ -117,7 +161,23 @@ export default function DocumentViewClient({ id, lang }: { id: string; lang: str
             const res = await fetch(`/api/documents/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount, date, invoiceNumber })
+                body: JSON.stringify({
+                    amount,
+                    date,
+                    invoiceNumber,
+                    senderName,
+                    senderCompany,
+                    senderEmail,
+                    senderPhone,
+                    recipientName,
+                    recipientAddress,
+                    // Передаємо нові поля на збереження
+                    iban,
+                    edrpou,
+                    swiftBic,
+                    bankName,
+                    paymentPurpose
+                })
             })
             if (!res.ok) throw new Error()
             toast.success(dict.app.documentView.toasts.updateSuccess)
@@ -135,20 +195,26 @@ export default function DocumentViewClient({ id, lang }: { id: string; lang: str
         }
         setGenerating(true)
         try {
+            // Публічний лінк на оплату, який ми згенеруємо для вшивання в лист
+            const paymentUrl = `${window.location.origin}/pay/${id}`
+
             const res = await fetch('/api/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     documentId: id,
                     situation,
-                    tone,
+                    tone: userPlan === 'FREE' ? 'business' : tone,
                     type,
+                    letterLang,
                     senderName,
                     senderCompany,
                     senderEmail,
                     senderPhone,
                     recipientName,
-                    recipientAddress
+                    recipientAddress,
+                    // Передаємо посилання в ШІ промпт генерації листа
+                    paymentUrl
                 })
             })
             const data = await res.json()
@@ -168,6 +234,11 @@ export default function DocumentViewClient({ id, lang }: { id: string; lang: str
     }
 
     const handleSendEmail = async () => {
+        if (userPlan === 'FREE') {
+            toast.error(txtUpgradeRequired)
+            return
+        }
+
         if (!toEmail.trim()) {
             toast.error(dict.app.documentView.toasts.enterRecipient)
             return
@@ -189,13 +260,20 @@ export default function DocumentViewClient({ id, lang }: { id: string; lang: str
                 })
             })
             const data = await res.json()
-            if (!res.ok) throw new Error(data.error || 'Failed')
+
+            if (!res.ok) {
+                throw new Error(data.error || 'Failed')
+            }
 
             setLetterStatus('SENT')
             toast.success(dict.app.documentView.toasts.sendSuccess)
         } catch (err: any) {
             console.error(err)
-            toast.error(err.message || 'Failed to send email.')
+            if (err.message === 'upgrade_required') {
+                toast.error(txtUpgradeRequired)
+            } else {
+                toast.error(err.message || 'Failed to send email.')
+            }
         } finally {
             setSendingEmail(false)
         }
@@ -205,6 +283,32 @@ export default function DocumentViewClient({ id, lang }: { id: string; lang: str
         navigator.clipboard.writeText(letterContent)
         toast.success(dict.app.documentView.toasts.copied)
     }
+
+    // Розрахунок стандартизованого тексту для QR-коду (стандарт EPC/НБУ)
+    const getQrCodeValue = () => {
+        if (!iban) return ''
+        const cleanAmount = amount.replace(/[^0-9.]/g, '') // Залишаємо суто числове значення
+        const cleanIban = iban.replace(/\s+/g, '')
+        const currency = cleanIban.startsWith('UA') ? 'UAH' : 'EUR'
+
+        return [
+            "BCD",
+            "002",
+            "1",
+            "SCT",
+            swiftBic || "",
+            senderCompany || bankName || "Beneficiary",
+            cleanIban,
+            cleanAmount ? `${currency}${cleanAmount}` : "",
+            "",
+            "",
+            paymentPurpose || `Invoice ${invoiceNumber}`,
+            ""
+        ].join("\n")
+    }
+
+    const qrValue = getQrCodeValue()
+    const isInternational = !!swiftBic || (iban && !iban.startsWith('UA'))
 
     if (loading) {
         return (
@@ -234,20 +338,21 @@ export default function DocumentViewClient({ id, lang }: { id: string; lang: str
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* ЛІВА КОЛОНКА (Документ + Оплата) */}
                 <div className="space-y-6">
                     <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
                         <h2 className="text-lg font-semibold text-slate-900 mb-4">{dict.app.documentView.extractedTitle}</h2>
                         <div className="space-y-4">
-                            <div>
-                                <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">{dict.app.documentView.invoiceNumber}</label>
-                                <input
-                                    type="text"
-                                    value={invoiceNumber}
-                                    onChange={(e) => setInvoiceNumber(e.target.value)}
-                                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-indigo-500"
-                                />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">{dict.app.documentView.invoiceNumber}</label>
+                                    <input
+                                        type="text"
+                                        value={invoiceNumber}
+                                        onChange={(e) => setInvoiceNumber(e.target.value)}
+                                        className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-indigo-500"
+                                    />
+                                </div>
                                 <div>
                                     <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">{dict.app.documentView.invoiceDate}</label>
                                     <input
@@ -257,16 +362,64 @@ export default function DocumentViewClient({ id, lang }: { id: string; lang: str
                                         className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-indigo-500"
                                     />
                                 </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">{dict.app.documentView.amountDue}</label>
+                                <input
+                                    type="text"
+                                    value={amount}
+                                    onChange={(e) => setAmount(e.target.value)}
+                                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-indigo-500 font-semibold text-slate-900"
+                                />
+                            </div>
+
+                            {/* Нові інпути фінансових реквізитів для коригування */}
+                            <div className="border-t border-slate-100 pt-4 space-y-3">
+                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Платіжні реквізити</h4>
                                 <div>
-                                    <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">{dict.app.documentView.amountDue}</label>
+                                    <label className="block text-[11px] font-semibold text-slate-500 mb-0.5">IBAN</label>
                                     <input
                                         type="text"
-                                        value={amount}
-                                        onChange={(e) => setAmount(e.target.value)}
-                                        className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-indigo-500"
+                                        value={iban}
+                                        onChange={(e) => setIban(e.target.value)}
+                                        className="w-full border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-mono tracking-wider focus:outline-indigo-500"
+                                        placeholder="UA00000..."
+                                    />
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="block text-[11px] font-semibold text-slate-500 mb-0.5">
+                                            {iban.startsWith('UA') || !iban ? 'ЄДРПОУ / ІПН' : 'SWIFT / BIC'}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={iban.startsWith('UA') || !iban ? edrpou : swiftBic}
+                                            onChange={(e) => iban.startsWith('UA') || !iban ? setEdrpou(e.target.value) : setSwiftBic(e.target.value)}
+                                            className="w-full border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-mono focus:outline-indigo-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[11px] font-semibold text-slate-500 mb-0.5">Банк отримувача</label>
+                                        <input
+                                            type="text"
+                                            value={bankName}
+                                            onChange={(e) => setBankName(e.target.value)}
+                                            className="w-full border border-slate-200 rounded-xl px-3 py-1.5 text-xs focus:outline-indigo-500"
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-[11px] font-semibold text-slate-500 mb-0.5">Призначення платежу</label>
+                                    <input
+                                        type="text"
+                                        value={paymentPurpose}
+                                        onChange={(e) => setPaymentPurpose(e.target.value)}
+                                        className="w-full border border-slate-200 rounded-xl px-3 py-1.5 text-xs focus:outline-indigo-500"
                                     />
                                 </div>
                             </div>
+
                             <button
                                 onClick={handleSaveFields}
                                 disabled={savingFields}
@@ -277,16 +430,101 @@ export default function DocumentViewClient({ id, lang }: { id: string; lang: str
                         </div>
                     </div>
 
+                    {/* БЛОК ШВИДКОЇ ОПЛАТИ (PAYMENT HUB WIDGET) */}
+                    {iban && (
+                        <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-5 rounded-2xl shadow-sm space-y-4">
+                            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                                <div>
+                                    <h3 className="text-sm font-bold tracking-wide uppercase text-indigo-300">
+                                        {isInternational ? '🌐 International Wire / SEPA' : txtPaymentWidgetTitle}
+                                    </h3>
+                                    <p className="text-[11px] text-slate-400">{txtPaymentWidgetDesc}</p>
+                                </div>
+                                <span className="bg-indigo-500/20 text-indigo-300 text-[10px] font-bold px-2 py-0.5 rounded-md border border-indigo-500/30">
+                                    Pay Hub
+                                </span>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                                <div className="md:col-span-2 space-y-3 text-xs">
+                                    <div>
+                                        <span className="block text-slate-400 text-[10px] uppercase font-semibold mb-0.5">Beneficiary IBAN</span>
+                                        <div className="flex items-center gap-2 bg-white/5 rounded-lg p-2 border border-white/10">
+                                            <code className="font-mono text-white tracking-wider truncate flex-1">{iban}</code>
+                                            <button
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(iban.replace(/\s+/g, ''))
+                                                    toast.success(txtCopyCleanIban)
+                                                }}
+                                                className="bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded text-[10px] font-medium transition shrink-0"
+                                            >
+                                                {lang === 'uk' ? 'Копіювати' : 'Copy'}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {!isInternational && edrpou && (
+                                            <div>
+                                                <span className="block text-slate-400 text-[10px] uppercase font-semibold mb-0.5">ЄДРПОУ</span>
+                                                <div className="flex items-center justify-between bg-white/5 rounded-lg p-2 border border-white/10 font-mono">
+                                                    <span>{edrpou}</span>
+                                                    <button onClick={() => { navigator.clipboard.writeText(edrpou); toast.success('ЄДРПОУ скопійовано') }} className="text-indigo-400 hover:text-white text-[10px]">{lang === 'uk' ? 'Копія' : 'Copy'}</button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {isInternational && swiftBic && (
+                                            <div>
+                                                <span className="block text-slate-400 text-[10px] uppercase font-semibold mb-0.5">SWIFT / BIC</span>
+                                                <div className="flex items-center justify-between bg-white/5 rounded-lg p-2 border border-white/10 font-mono">
+                                                    <span className="truncate">{swiftBic}</span>
+                                                    <button onClick={() => { navigator.clipboard.writeText(swiftBic); toast.success('SWIFT скопійовано') }} className="text-indigo-400 hover:text-white text-[10px]">{lang === 'uk' ? 'Копія' : 'Copy'}</button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div>
+                                            <span className="block text-slate-400 text-[10px] uppercase font-semibold mb-0.5">Сума</span>
+                                            <div className="bg-white/5 rounded-lg p-2 border border-white/10 font-bold text-emerald-400 font-mono truncate">
+                                                {amount || '—'}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {paymentPurpose && (
+                                        <div>
+                                            <span className="block text-slate-400 text-[10px] uppercase font-semibold mb-0.5">Призначення</span>
+                                            <div className="bg-white/5 rounded-lg p-2 border border-white/10 text-slate-300 italic text-[11px] line-clamp-1 hover:line-clamp-none transition-all">
+                                                {paymentPurpose}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="flex flex-col items-center justify-center bg-white p-2 rounded-xl border border-white/10 shrink-0">
+                                    <img
+                                        src={`https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(qrValue)}`}
+                                        alt="Payment QR Code"
+                                        className="w-24 h-24"
+                                    />
+                                    <span className="text-[9px] text-slate-600 font-medium mt-1 text-center leading-tight">
+                                        {lang === 'uk' ? 'Скануй у банк-клієнт' : 'Scan via banking app'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden h-[540px]">
                         <iframe src={`${document?.pdfUrl}#toolbar=0`} className="w-full h-full border-none" title="Invoice PDF Preview" />
                     </div>
                 </div>
 
+                {/* ПРАВА КОЛОНКА (Генерація текстів та Email) */}
                 <div className="space-y-6">
                     <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
                         <h2 className="text-lg font-semibold text-slate-900 mb-4">{dict.app.documentView.generateTitle}</h2>
                         <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <div>
                                     <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">{dict.app.documentView.letterType}</label>
                                     <select value={type} onChange={(e) => setType(e.target.value)} className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-indigo-500 bg-white">
@@ -296,11 +534,25 @@ export default function DocumentViewClient({ id, lang }: { id: string; lang: str
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">{dict.app.documentView.tone}</label>
-                                    <select value={tone} onChange={(e) => setTone(e.target.value)} className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-indigo-500 bg-white">
+                                    <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">
+                                        {dict.app.documentView.tone} {userPlan === 'FREE' ? '🔒' : ''}
+                                    </label>
+                                    <select
+                                        value={userPlan === 'FREE' ? 'business' : tone}
+                                        onChange={(e) => setTone(e.target.value)}
+                                        disabled={userPlan === 'FREE'}
+                                        className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-indigo-500 bg-white disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
+                                    >
                                         <option value="business">{dict.app.documentView.tones.business}</option>
-                                        <option value="friendly" disabled={userPlan === 'FREE'}>{dict.app.documentView.tones.friendly} {userPlan === 'FREE' ? '🔒' : ''}</option>
-                                        <option value="legal" disabled={userPlan === 'FREE'}>{dict.app.documentView.tones.legal} {userPlan === 'FREE' ? '🔒' : ''}</option>
+                                        <option value="friendly">{dict.app.documentView.tones.friendly}</option>
+                                        <option value="legal">{dict.app.documentView.tones.legal}</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">{txtLetterLangLabel}</label>
+                                    <select value={letterLang} onChange={(e) => setLetterLang(e.target.value)} className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-indigo-500 bg-white">
+                                        <option value="uk">Українська</option>
+                                        <option value="en">English</option>
                                     </select>
                                 </div>
                             </div>
@@ -350,46 +602,54 @@ export default function DocumentViewClient({ id, lang }: { id: string; lang: str
                                 <textarea rows={10} value={letterContent} onChange={(e) => setLetterContent(e.target.value)} className="w-full border border-slate-200 rounded-xl p-4 text-sm font-sans text-slate-800 bg-slate-50 focus:bg-white focus:outline-indigo-500 transition" />
                             </div>
 
-                            <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-4">
+                            <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-4 relative overflow-hidden">
                                 <h3 className="text-md font-semibold text-slate-900">{dict.app.documentView.sendEmailTitle}</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">{dict.app.documentView.recipientEmail}</label>
                                         <input
                                             type="email"
+                                            disabled={userPlan === 'FREE'}
                                             value={toEmail}
                                             onChange={(e) => setToEmail(e.target.value)}
                                             placeholder={dict.app.documentView.placeholderEmail}
-                                            className="w-full border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-indigo-500"
+                                            className="w-full border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-indigo-500 disabled:bg-slate-50 disabled:text-slate-400"
                                         />
                                     </div>
                                     <div>
                                         <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">{dict.app.documentView.emailSubject}</label>
                                         <input
                                             type="text"
+                                            disabled={userPlan === 'FREE'}
                                             value={emailSubject}
                                             onChange={(e) => setEmailSubject(e.target.value)}
                                             placeholder={dict.app.documentView.placeholderSubject}
-                                            className="w-full border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-indigo-500"
+                                            className="w-full border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-indigo-500 disabled:bg-slate-50 disabled:text-slate-400"
                                         />
                                     </div>
                                 </div>
                                 <button
                                     onClick={handleSendEmail}
-                                    disabled={sendingEmail}
-                                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-xl transition disabled:opacity-60 flex items-center justify-center gap-2"
+                                    disabled={sendingEmail || userPlan === 'FREE'}
+                                    className={`w-full font-medium py-2.5 rounded-xl transition flex items-center justify-center gap-2 ${
+                                        userPlan === 'FREE'
+                                            ? 'bg-slate-100 border border-slate-200 text-slate-400 cursor-not-allowed shadow-none'
+                                            : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+                                    }`}
                                 >
                                     {sendingEmail ? (
                                         <>
                                             <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                             {dict.app.documentView.btnSending}
                                         </>
+                                    ) : userPlan === 'FREE' ? (
+                                        txtBtnPaidOnly
                                     ) : (
                                         dict.app.documentView.btnSend
                                     )}
                                 </button>
                                 <p className="text-[11px] text-slate-400 text-center">
-                                    {dict.app.documentView.resendNotice}
+                                    {userPlan === 'FREE' ? txtNoticePaidOnly : dict.app.documentView.resendNotice}
                                 </p>
                             </div>
                         </div>

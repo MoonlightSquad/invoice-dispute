@@ -24,9 +24,10 @@ export default async function SettingsPage() {
     const dbUser = await prisma.user.findUnique({
         where: { authId: user.id },
         include: {
+            notificationSettings: true,
+            telegramSession: true,
             subscriptions: {
-                orderBy: { createdAt: 'desc' },
-                take: 1
+                orderBy: { createdAt: 'desc' }
             }
         }
     })

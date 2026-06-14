@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Invoice Dispute Resolver"
+  title: "Moonlight"
 };
 
 export default async function RootLayout({
@@ -40,7 +40,7 @@ export default async function RootLayout({
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
 
           <div className="font-bold text-base sm:text-lg md:text-xl text-indigo-600 tracking-tight truncate min-w-0">
-            Invoice Dispute Resolver
+            Moonlight
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4 md:gap-6 flex-shrink-0">

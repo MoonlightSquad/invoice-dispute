@@ -42,3 +42,13 @@ export type EmailEvent = Prisma.EmailEventModel
  * 
  */
 export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model NotificationSettings
+ * 
+ */
+export type NotificationSettings = Prisma.NotificationSettingsModel
+/**
+ * Model TelegramSession
+ * 
+ */
+export type TelegramSession = Prisma.TelegramSessionModel

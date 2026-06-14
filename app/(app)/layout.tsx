@@ -36,7 +36,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <aside className="w-64 border-r bg-white min-h-screen p-4 flex flex-col justify-between">
                 <div>
                     <div className="font-bold text-xl text-indigo-600 mb-8">
-                        Invoice Resolver
+                        Moonlight
                     </div>
 
                     <div className="text-xs text-slate-400 mb-6 truncate">
