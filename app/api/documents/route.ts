@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { PDFParse } from 'pdf-parse'
+import { extractText } from 'unpdf'
 import * as Sentry from "@sentry/nextjs";
 
 // Функція для інтелектуального аналізу тексту через Groq
@@ -106,6 +106,7 @@ async function extractInvoiceDataWithGroq(text: string): Promise<Record<string, 
         }
     } catch (error) {
         console.error('Помилка при екстракції даних через Groq:', error)
+        Sentry.captureException(error)
     }
 
     return defaultData
@@ -152,19 +153,20 @@ export async function POST(req: NextRequest) {
         let extractedData: Record<string, string> = {}
 
         try {
-            const parser = new PDFParse({ data: new Uint8Array(buffer) })
-            const parsed = await parser.getText()
+            const parsed = await extractText(buffer)
+            const pdfText = Array.isArray(parsed.text)
+                ? parsed.text.join('\n')
+                : (parsed.text || '')
 
-            const groqFields = await extractInvoiceDataWithGroq(parsed.text)
+            const groqFields = await extractInvoiceDataWithGroq(pdfText)
 
             extractedData = {
                 ...groqFields,
-                rawText: parsed.text.slice(0, 4000)
+                rawText: pdfText.slice(0, 4000)
             }
-
-            await parser.destroy()
         } catch (error) {
             console.error('Помилка парсингу PDF:', error)
+            Sentry.captureException(error)
             extractedData = {
                 amount: '', date: '', invoiceNumber: '', rawText: '',
                 iban: '', edrpou: '', swiftBic: '', bankName: '', paymentPurpose: ''
