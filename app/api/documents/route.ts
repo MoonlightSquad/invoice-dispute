@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
         let extractedData: Record<string, string> = {}
 
         try {
-            const parsed = await extractText(buffer)
+            const parsed = await extractText(new Uint8Array(arrayBuffer))
             const pdfText = Array.isArray(parsed.text)
                 ? parsed.text.join('\n')
                 : (parsed.text || '')
