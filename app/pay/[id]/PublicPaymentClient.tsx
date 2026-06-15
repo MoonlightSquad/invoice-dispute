@@ -32,7 +32,19 @@ export default function PublicPaymentClient({ data }: { data: PaymentData }) {
     const cleanPurpose = String(data.paymentPurpose || `Invoice ${data.invoiceNumber || ''}`).trim().replace(/[\r\n]+/g, ' ');
 
     const qrValue = isUa
-        ? `UA:${cleanIban}:${cleanAmount}:UAH:${cleanPurpose}`
+        ? [
+            "BCD",
+            "002",
+            "1",
+            "UCT",
+            "",
+            cleanCompany,
+            cleanIban,
+            cleanAmount ? `UAH${cleanAmount}` : "",
+            data.edrpou || "",
+            cleanPurpose,
+            "",
+        ].join("\n")
         : [
             "BCD",
             "002",
