@@ -5,6 +5,7 @@ import "../globals.css";
 import { AuthModal } from "@/components/AuthModal";
 import React from "react";
 import { getDictionary } from "@/lib/i18n";
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -79,6 +80,7 @@ export default async function RootLayout({
         {dict.footer.rights}
       </footer>
       <Toaster richColors position="top-center" />
+      <Analytics/>
       </body>
       </html>
   );
