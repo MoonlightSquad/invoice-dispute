@@ -220,7 +220,7 @@ export default function PublicPaymentClient({ data }: { data: PaymentData }) {
 
                         <div className="bg-white p-3 rounded-2xl inline-block shadow-xl border border-white/10 my-2">
                             <img
-                                src={isUa ? url : `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}`}
+                                src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}`}
                                 alt="Payment QR Code"
                                 className="w-40 h-40 md:w-44 md:h-44"
                             />
