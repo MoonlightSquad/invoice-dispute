@@ -18,7 +18,6 @@ interface PaymentData {
 
 export default function PublicPaymentClient({ data }: { data: PaymentData }) {
     const [copiedField, setCopiedField] = useState<string | null>(null)
-    const [url, setUrl] = useState<string | null>(null)
 
     const isUa = data.iban.toUpperCase().startsWith('UA')
     const cleanAmount = data.amount.replace(/[^0-9.]/g, '')
@@ -32,46 +31,28 @@ export default function PublicPaymentClient({ data }: { data: PaymentData }) {
     const cleanCompany = String(data.senderCompany || '').trim().replace(/[\r\n]+/g, ' ');
     const cleanPurpose = String(data.paymentPurpose || `Invoice ${data.invoiceNumber || ''}`).trim().replace(/[\r\n]+/g, ' ');
 
-    if (isUa) {
-        const qrValue = [
-            "BCD",
-            "002",
-            "2",
-            "UCT",
-            "",
-            cleanCompany,
-            cleanIban,
+    const qrValue = isUa
+        ? [
+            "BCD", "002", "2", "UCT", "",
+            cleanCompany, cleanIban,
             cleanAmount ? `UAH${cleanAmount}` : "",
-            data.edrpou || "",
-            "",
-            "",
-            cleanPurpose,
+            data.edrpou || "", "", "", cleanPurpose,
+        ].join("\n")
+        : [
+            "BCD", "002", "1", "SCT",
+            cleanSwift, cleanCompany, cleanIban,
+            cleanAmount ? `EUR${cleanAmount}` : "",
+            "", "", cleanPurpose, "",
         ].join("\n")
 
-        const encoded = btoa(unescape(encodeURIComponent(qrValue)))
-            .replace(/\+/g, '-')
-            .replace(/\//g, '_')
-            .replace(/=+$/, '')
+    const encoded = btoa(unescape(encodeURIComponent(qrValue)))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '')
 
-        setUrl(`https://bank.gov.ua/qr/${encoded}`)
-    } else {
-        const qrValue = [
-            "BCD",
-            "002",
-            "1",
-            "SCT",
-            cleanSwift,
-            cleanCompany,
-            cleanIban,
-            cleanAmount ? `EUR${cleanAmount}` : "",
-            "",
-            "",
-            cleanPurpose,
-            "",
-        ].join("\n");
-
-        setUrl(qrValue)
-    }
+    const url = isUa
+        ? `https://bank.gov.ua/qr/${encoded}`
+        : `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrValue)}`
 
     const handleCopy = (text: string, fieldName: string) => {
         navigator.clipboard.writeText(text.replace(/\s+/g, ''))
@@ -220,7 +201,7 @@ export default function PublicPaymentClient({ data }: { data: PaymentData }) {
 
                         <div className="bg-white p-3 rounded-2xl inline-block shadow-xl border border-white/10 my-2">
                             <img
-                                src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}`}
+                                src={`${url}`}
                                 alt="Payment QR Code"
                                 className="w-40 h-40 md:w-44 md:h-44"
                             />
