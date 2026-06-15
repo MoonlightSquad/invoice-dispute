@@ -35,15 +35,16 @@ export default function PublicPaymentClient({ data }: { data: PaymentData }) {
         ? [
             "BCD",
             "002",
-            "1",
+            "2",
             "UCT",
             "",
             cleanCompany,
             cleanIban,
             cleanAmount ? `UAH${cleanAmount}` : "",
             data.edrpou || "",
-            cleanPurpose,
             "",
+            "",
+            cleanPurpose,
         ].join("\n")
         : [
             "BCD",
