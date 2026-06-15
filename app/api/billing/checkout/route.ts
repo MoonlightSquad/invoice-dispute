@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
         for (const sub of activeSubscriptions) {
             if (sub.lsSubscriptionId && sub.status !== 'cancelled') {
                 try {
-                    const removeResponse = await fetch('https://api.monobank.ua/api/merchant/subscription/remove', {
+                    const removeResponse = await fetch(`${process.env.MONO_API_URL}/api/merchant/subscription/remove`, {
                         method: 'POST',
                         headers: {
                             'X-Token': process.env.MONO_API_KEY!,
@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ url: `${baseUrl}/settings` })
         }
 
-        const response = await fetch('https://api.monobank.ua/api/merchant/subscription/create', {
+        const response = await fetch(`${process.env.MONO_API_URL}/api/merchant/subscription/create`, {
             method: 'POST',
             headers: {
                 'X-Token': process.env.MONO_API_KEY!,

@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
         }
 
         const dateFrom = encodeURIComponent('2025-01-01T00:00:00Z')
-        const url = `https://api.monobank.ua/api/merchant/subscription/payments?subscriptionId=${subscriptionId}&page=${page}&limit=${limit}&dateFrom=${dateFrom}`
+        const url = `${process.env.MONO_API_URL}/api/merchant/subscription/payments?subscriptionId=${subscriptionId}&page=${page}&limit=${limit}&dateFrom=${dateFrom}`
 
         const response = await fetch(url, {
             method: 'GET',
