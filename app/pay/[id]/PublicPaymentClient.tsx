@@ -31,20 +31,29 @@ export default function PublicPaymentClient({ data }: { data: PaymentData }) {
     const cleanCompany = String(data.senderCompany || '').trim().replace(/[\r\n]+/g, ' ');
     const cleanPurpose = String(data.paymentPurpose || `Invoice ${data.invoiceNumber || ''}`).trim().replace(/[\r\n]+/g, ' ');
 
-    const qrValue = [
-        "BCD",
-        "002",
-        "1",
-        "SCT",
-        cleanSwift,
-        cleanCompany,
-        cleanIban,
-        cleanAmount ? `${currency}${cleanAmount}` : "",
-        "",
-        "",
-        cleanPurpose,
-        ""
-    ].join("\n");
+    const qrValue = isUa
+        ? [
+            `Name=${cleanCompany}`,
+            `IBAN=${cleanIban}`,
+            `Amount=${cleanAmount}`,
+            `Currency=UAH`,
+            `EDRPOU=${data.edrpou || ''}`,
+            `Purpose=${cleanPurpose}`,
+        ].join('|')
+        : [
+            "BCD",
+            "002",
+            "1",
+            "SCT",
+            cleanSwift,
+            cleanCompany,
+            cleanIban,
+            cleanAmount ? `EUR${cleanAmount}` : "",
+            "",
+            "",
+            cleanPurpose,
+            "",
+        ].join("\n");
 
     const handleCopy = (text: string, fieldName: string) => {
         navigator.clipboard.writeText(text.replace(/\s+/g, ''))
