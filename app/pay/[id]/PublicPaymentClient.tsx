@@ -50,7 +50,13 @@ export default function PublicPaymentClient({ data }: { data: PaymentData }) {
         .replace(/\//g, '_')
         .replace(/=+$/, '')
 
-    const url = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrValue)}`
+    let dataUrl;
+
+    if(isUa) dataUrl = encodeURIComponent(`https://bank.gov.ua/qr/${encoded}`)
+
+    const url = isUa
+        ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${dataUrl}`
+        : `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrValue)}`
 
     const handleCopy = (text: string, fieldName: string) => {
         navigator.clipboard.writeText(text.replace(/\s+/g, ''))
