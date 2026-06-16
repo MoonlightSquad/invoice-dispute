@@ -8,6 +8,8 @@ import { SignOutButton } from '@/components/SignOutButton'
 import { SidebarNav } from '@/components/SidebarNav'
 
 import '@/app/globals.css'
+import {CookieConsent} from "@/components/CookieConsent";
+import React from "react";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
     const cookieStore = await cookies()
@@ -54,6 +56,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <main className="flex-1 p-8 overflow-auto">
                 {children}
             </main>
+
+            <CookieConsent dict={dict} />
         </div>
         </body>
         </html>
