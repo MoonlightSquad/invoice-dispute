@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { setConsent } from "@vercel/analytics";
 
 interface CookieConsentProps {
     dict: any;
@@ -11,20 +10,15 @@ export function CookieConsent({ dict }: CookieConsentProps) {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        // Перевіряємо, чи користувач уже зробив вибір раніше
         const consent = localStorage.getItem("cookie-consent");
 
         if (!consent) {
             setIsVisible(true);
-        } else {
-            // Оновлюємо стан Vercel Analytics відповідно до збереженого вибору
-            setConsent(consent === "granted" ? "granted" : "rejected");
         }
     }, []);
 
     const handleConsent = (status: "granted" | "rejected") => {
         localStorage.setItem("cookie-consent", status);
-        setConsent(status);
         setIsVisible(false);
     };
 

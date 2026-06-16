@@ -86,7 +86,7 @@ export default async function RootLayout({
 
         <CookieConsent dict={dict} />
 
-        <Analytics mode="manual" />
+        <Analytics />
         </body>
         </html>
     );
