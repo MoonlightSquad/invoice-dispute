@@ -6,8 +6,11 @@ import { prisma } from '@/lib/prisma'
 import { getDictionary } from '@/lib/i18n'
 import { SignOutButton } from '@/components/SignOutButton'
 import { SidebarNav } from '@/components/SidebarNav'
+import { Analytics } from "@vercel/analytics/next";
+import { CookieConsent } from "@/components/CookieConsent";
 
 import '@/app/globals.css'
+import React from "react";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
     const cookieStore = await cookies()
@@ -55,6 +58,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 {children}
             </main>
         </div>
+
+        <CookieConsent  dict={dict} lang={dbUser?.language ?? 'en'} />
+        <Analytics />
         </body>
         </html>
     )
