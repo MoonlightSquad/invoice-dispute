@@ -84,7 +84,7 @@ export default async function RootLayout({
 
         <Toaster richColors position="top-center" />
 
-        <CookieConsent dict={dict} />
+        <CookieConsent dict={dict} lang={lang}/>
 
         <Analytics />
         </body>
