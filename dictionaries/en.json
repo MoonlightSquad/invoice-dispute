@@ -4,6 +4,12 @@
     "title": "Moonlight — Get paid with AI-powered demand letters",
     "description": "Client hasn't paid your invoice? Automatically generate professional dispute and pre-litigation letters from your PDF invoices in 30 seconds."
   },
+  "gdpr": {
+    "title": "Cookie Consent",
+    "text": "We use cookies to optimize our performance, personalize content, and analyze our traffic in accordance with our GDPR compliance.",
+    "accept": "Accept All",
+    "decline": "Decline Optional"
+  },
   "nav": {
     "features": "Features",
     "pricing": "Pricing",
