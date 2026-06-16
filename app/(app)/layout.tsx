@@ -6,9 +6,10 @@ import { prisma } from '@/lib/prisma'
 import { getDictionary } from '@/lib/i18n'
 import { SignOutButton } from '@/components/SignOutButton'
 import { SidebarNav } from '@/components/SidebarNav'
+import { Analytics } from "@vercel/analytics/next";
+import { CookieConsent } from "@/components/CookieConsent";
 
 import '@/app/globals.css'
-import {CookieConsent} from "@/components/CookieConsent";
 import React from "react";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -56,9 +57,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <main className="flex-1 p-8 overflow-auto">
                 {children}
             </main>
-
-            <CookieConsent dict={dict} />
         </div>
+
+        <CookieConsent dict={dict} />
+        <Analytics />
         </body>
         </html>
     )
