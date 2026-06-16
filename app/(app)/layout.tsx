@@ -59,7 +59,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             </main>
         </div>
 
-        <CookieConsent dict={dict} />
+        <CookieConsent  dict={dict} lang={dbUser?.language ?? 'en'} />
         <Analytics />
         </body>
         </html>

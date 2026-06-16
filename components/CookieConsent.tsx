@@ -4,9 +4,10 @@ import React, { useState, useEffect } from "react";
 
 interface CookieConsentProps {
     dict: any;
+    lang: any;
 }
 
-export function CookieConsent({ dict }: CookieConsentProps) {
+export function CookieConsent({ dict, lang }: CookieConsentProps) {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
@@ -31,7 +32,7 @@ export function CookieConsent({ dict }: CookieConsentProps) {
             </h3>
             <p className="text-xs text-slate-600 leading-relaxed mb-4">
                 {dict.gdpr?.text || "We use cookies to improve your experience and analyze traffic."}{" "}
-                <a href="/privacy" className="text-indigo-600 hover:underline font-medium">
+                <a href={`/${lang}/privacy`} className="text-indigo-600 hover:underline font-medium">
                     {dict.privacy?.title || "Privacy Policy"}
                 </a>
             </p>
